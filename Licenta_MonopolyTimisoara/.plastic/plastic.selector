@@ -1,0 +1,4 @@
+repository "Licenta_MonopolyTimisoara@TeoFlorea@cloud"
+  path "/"
+    br "/main"
+    co "/main"
