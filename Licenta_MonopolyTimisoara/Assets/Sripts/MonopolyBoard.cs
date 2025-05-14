@@ -69,29 +69,59 @@ public class MonopolyBoard : MonoBehaviour
         GameObject tokenToMove = player.MyToken;
         int indexOnBoard = route.IndexOf(player.MyMonopolyNode);
         bool moveOverGo = false;
+        bool isMovingForward = steps > 0;
 
-        while (stepsLeft > 0)
+        if (isMovingForward)
         {
-            indexOnBoard++;
-
-            // IS THIS OVER GO?
-            if (indexOnBoard > route.Count - 1)
+            while (stepsLeft > 0)
             {
-                indexOnBoard = 0;
-                moveOverGo = true;
+                indexOnBoard++;
+
+                // IS THIS OVER GO?
+                if (indexOnBoard > route.Count - 1)
+                {
+                    indexOnBoard = 0;
+                    moveOverGo = true;
+                }
+
+                // GET START AND END POSITIONS
+                Vector3 startPos = tokenToMove.transform.position;
+                Vector3 endPos = route[indexOnBoard].transform.position;
+
+                // PERFORM THE MOVE
+                while (MoveToNextNode(tokenToMove, endPos, 10f))
+                {
+                    yield return null;
+                }
+
+                stepsLeft--;
             }
-
-            // GET START AND END POSITIONS
-            Vector3 startPos = tokenToMove.transform.position;
-            Vector3 endPos = route[indexOnBoard].transform.position;
-
-            // PERFORM THE MOVE
-            while (MoveToNextNode(tokenToMove, endPos, 10f))
+        }
+        else
+        {
+            while (stepsLeft < 0)
             {
-                yield return null;  
-            }
+                indexOnBoard--;
 
-            stepsLeft--;
+                // IS THIS OVER GO?
+                if (indexOnBoard < 0)
+                {
+                    indexOnBoard = route.Count - 1;
+                    
+                }
+
+                // GET START AND END POSITIONS
+                //Vector3 startPos = tokenToMove.transform.position;
+                Vector3 endPos = route[indexOnBoard].transform.position;
+
+                // PERFORM THE MOVE
+                while (MoveToNextNode(tokenToMove, endPos, 10f))
+                {
+                    yield return null;
+                }
+
+                stepsLeft++;
+            }
         }
         // GET GO MONEY
         if (moveOverGo)

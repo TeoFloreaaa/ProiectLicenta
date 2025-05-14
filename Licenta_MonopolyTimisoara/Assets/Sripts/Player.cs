@@ -118,5 +118,51 @@ public class Player
         myInfo.SetPlayerCash(money);
     }
 
+    //----------------JAIL---------------------
+
+    public void GoToJail(int indexOnBoard)
+    {
+        isInJail = true;
+        // REPOSITION PLAYER
+        //myToken.transform.position = MonopolyBoard.Instance.route[10].transform.position;
+        //currentnode = MonopolyBoard.Instance.route[10];
+        MonopolyBoard.Instance.MovePlayerToken(CalculateDistanceFromJail(indexOnBoard), this);
+    }
+
+    public void SetOutOfJail()
+    {
+        isInJail = false;
+        ResetNumTurnsInJail();
+
+    }
+
+int CalculateDistanceFromJail(int indexOnBoard)
+    {
+        int result = 0;
+        int indexOfJail = 10;
+
+        if (indexOnBoard > indexOfJail)
+        {
+            result = (indexOnBoard - indexOfJail) * -1;
+        }
+        else
+        {
+            result = (indexOfJail - indexOnBoard);
+        }
+
+        return result;
+    }
+
+    public int NumTurnsInJail => numTurnsInJail;
+
+    public void IncreaseNumTurnsInJail()
+    {
+        numTurnsInJail++;
+    }
+
+    public void ResetNumTurnsInJail()
+    {
+        numTurnsInJail = 0;
+    }
 
 }
