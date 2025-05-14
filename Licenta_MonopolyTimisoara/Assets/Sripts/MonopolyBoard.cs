@@ -1,10 +1,27 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class MonopolyBoard : MonoBehaviour
 {
+    public static MonopolyBoard Instance;
+
     public List<MonopolyNode> route = new List<MonopolyNode>();
+
+    [System.Serializable]
+    public class NodeSet
+    {
+        public Color setColor = Color.white;
+        public List<MonopolyNode> nodesInSetList = new List<MonopolyNode>();
+    }
+
+    public List<NodeSet> nodeSetList = new List<NodeSet>();
+
+    private void Awake()
+    {
+        Instance = this;
+    }
 
     void OnValidate()
     {
@@ -13,6 +30,16 @@ public class MonopolyBoard : MonoBehaviour
         {
             route.Add(node.GetComponent<MonopolyNode>());
         }
+
+        // UPDATE ALL NODE COLORS
+        //for (int i = 0; i < nodeSetList.Count; i++)
+        //{
+        //    for (int j = 0; j < nodeSetList[i].nodesInSetList.Count; j++)
+        //   {
+        //        nodeSetList[i].nodesInSetList[j].UpdateColorField(nodeSetList[i].setColor);
+        //    }
+        //}
+
     }
 
     void OnDrawGizmos()
@@ -81,4 +108,21 @@ public class MonopolyBoard : MonoBehaviour
     {
         return endPos != (tokenToMove.transform.position = Vector3.MoveTowards(tokenToMove.transform.position, endPos, speed * Time.deltaTime));
     }
+
+    public (List<MonopolyNode>, bool) PlayerHasAllNodesOfSet(MonopolyNode node)
+    {
+        foreach (var nodeSet in nodeSetList)
+        {
+            if (nodeSet.nodesInSetList.Contains(node))
+            {
+                // CHECK IFF ALL THE NODES IN SET HAVE THE SAME OWNER
+                bool allSame = nodeSet.nodesInSetList.All(_node => _node.Owner == node.Owner);
+
+                return (nodeSet.nodesInSetList, allSame);
+            }
+        }
+
+        return (null, false);
+    }
+
 }

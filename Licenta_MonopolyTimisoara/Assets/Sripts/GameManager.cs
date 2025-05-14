@@ -24,6 +24,9 @@ public class GameManager : MonoBehaviour
     bool rolledADouble;
     int doubleRollCount;
 
+    //TAX POOL
+    int taxPool = 0;
+
     //PASS OVER GO TO GET THE MONEY
     public int GetGoMoney => goMoney;
 
@@ -69,6 +72,8 @@ public class GameManager : MonoBehaviour
         // ANY ROLL DICE AND STORE THEM
         rolledDice[0] = Random.Range(1, 7);
         rolledDice[1] = Random.Range(1, 7);
+
+
         Debug.Log("Rolled dice are: " + rolledDice[0] + " & " + rolledDice[1]);
 
         // CHECK FOR DOUBLE
@@ -113,6 +118,23 @@ public class GameManager : MonoBehaviour
         }
 
         // IF HUMAN - SHOW UI
+    }
+
+    public int[] LastRolledDice()
+    {
+        return rolledDice;
+    }
+
+    public void AddTaxToPool(int amount)
+    {
+        taxPool += amount;
+    }
+
+    public int GetTaxPool()
+    {
+        int currentTaxPool = taxPool;
+        taxPool = 0;
+        return currentTaxPool;
     }
 
 

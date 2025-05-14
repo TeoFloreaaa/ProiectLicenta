@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
+
 
 public enum MonopolyNodeType
 {
@@ -21,6 +23,8 @@ public class MonopolyNode : MonoBehaviour
 {
     public MonopolyNodeType monopolyNodeType;
 
+    public Image propertyColorField;
+
     [Header("Name")]
     [SerializeField] internal new string name;
     [SerializeField] TMP_Text nameText;
@@ -33,7 +37,8 @@ public class MonopolyNode : MonoBehaviour
     [SerializeField] bool calculateRentAuto;
     [SerializeField] int currentRent;
     [SerializeField] internal int baseRent;
-    [SerializeField] internal int[] rentWithHouses;
+    [SerializeField] internal List<int> rentWithHouses = new List<int>();
+    int numberOfHouses;
 
     [Header("Property Mortgage")]
     [SerializeField] GameObject mortgageImage;
@@ -42,10 +47,16 @@ public class MonopolyNode : MonoBehaviour
     [SerializeField] int mortgageValue;
 
     [Header("Property Owner")]
-    public Player owner;
     [SerializeField] GameObject ownerBar;
     [SerializeField] TMP_Text ownerText;
+    Player owner;
 
+    public Player Owner => owner;
+    
+    public void SetOwner(Player newOwner)
+    {
+        owner = newOwner;
+    }
 
     private void OnValidate()
     {
@@ -61,19 +72,24 @@ public class MonopolyNode : MonoBehaviour
             {
                 if (baseRent > 0)
                 {
-                    price = 3 * (baseRent * 10); 
+                    price = 3 * (baseRent * 10);
 
                     // MORTGAGE PRICE
-                    mortgageValue = price/2;
+                    mortgageValue = price / 2;
 
-                    rentWithHouses = new int[]
-                    {
-                        baseRent * 5,
-                        baseRent * 5 * 3,
-                        baseRent * 5 * 9,
-                        baseRent * 5 * 16,
-                        baseRent * 5 * 25,
-                    };
+                    rentWithHouses.Clear();
+                    rentWithHouses.Add(baseRent * 5);
+                    rentWithHouses.Add(baseRent * 5 * 3);
+                    rentWithHouses.Add(baseRent * 5 * 9);
+                    rentWithHouses.Add(baseRent * 5 * 16);
+                    rentWithHouses.Add(baseRent * 5 * 25);
+                }
+                else if (baseRent <= 0)
+                {
+                    price = 0;
+                    baseRent = 0;
+                    rentWithHouses.Clear();
+                    mortgageValue = 0;
                 }
             }
             if (monopolyNodeType == MonopolyNodeType.Utility)
@@ -95,6 +111,17 @@ public class MonopolyNode : MonoBehaviour
         OnOwnerUpdated();
         UnMortgageProperty();       
     }
+
+    public void UpdateColorField(Color color)
+    {
+        color.a = 1f;
+        if(propertyColorField != null)
+        { 
+            propertyColorField.color = color;        
+        }
+        
+    }
+
 
     // MORTGAGE CONTENT
     public int MortgageProperty()
@@ -132,7 +159,7 @@ public class MonopolyNode : MonoBehaviour
     {
         if (ownerBar != null)
         {
-            if (owner.name != "")
+            if (owner != null)
             {
                 ownerBar.SetActive(true);
                 ownerText.text = owner.name;
@@ -148,6 +175,205 @@ public class MonopolyNode : MonoBehaviour
     public void PlayerLandedOnNode(Player currentPlayer)
     {
         bool playerIsHuman = currentPlayer.playerType == Player.PlayerType.HUMAN;
+
+        // CHECK FOR NODE TYPE AND ACT
+        switch (monopolyNodeType)
+        {
+            case MonopolyNodeType.Property:
+                if (!playerIsHuman) // AI
+                {
+                    // IF IT OWNED && IF WE NOT ARE OWNER && IS NOT MORTGAGED
+                    if (owner != null && owner != currentPlayer && !isMortgaged)
+                    {
+                        // PAY RENT TO SOMEBODY
+
+                        // CALCULATE THE RENT
+                        Debug.Log("PLAYER MIGHT PAY RENT && OWNER IS: " + owner.name);
+
+                        int rentToPay = CalculatePropertyRent();
+
+                        // PAY THE RENT TO THE OWNER
+                        currentPlayer.PayRent(rentToPay, owner);
+
+                        // SHOW A MESSAGE ABOUT WHAT HAPPENED
+                        Debug.Log(currentPlayer.name + " pays rent of: " + rentToPay + " to " + owner.name);
+
+                    }
+                    else if (owner == null && currentPlayer.CanAffordNode(price))
+                    {
+                        // BUY THE NODE
+                        Debug.Log("PLAYER COULD BUY");
+                        currentPlayer.BuyProperty(this);
+                        OnOwnerUpdated();
+
+                        // SHOW A MESSAGE ABOUT WHAT HAPPENED
+                    }
+                    else
+                    {
+                        //IS UNOWNED AND WE CANT AFFORD IT
+                    }
+                }
+                else // HUMAN
+                {
+                    // IF IT OWNED && IF WE NOT ARE OWNER && IS NOT MORTGAGED
+                    if (owner != null && owner != currentPlayer && !isMortgaged)
+                    {
+                        // PAY RENT TO SOMEBODY
+
+                        // CALCULATE THE RENT
+
+                        // PAY THE RENT TO THE OWNER
+
+                        // SHOW A MESSAGE ABOUT WHAT HAPPENED
+                    }
+                    else if (owner == null /* && IF CAN AFFORD */)
+                    {
+                        //SHOW BUY INTERFACE
+
+                        // SHOW A MESSAGE ABOUT WHAT HAPPENED
+                    }
+                    else
+                    {
+                        //IS UNOWNED AND WE CANT AFFORD IT
+                    }
+                }
+                break;
+            case MonopolyNodeType.Utility:
+                if (!playerIsHuman) // AI
+                {
+                    // IF IT OWNED && IF WE NOT ARE OWNER && IS NOT MORTGAGED
+                    if (owner != null && owner != currentPlayer && !isMortgaged)
+                    {
+                        // PAY RENT TO SOMEBODY
+
+                        // CALCULATE THE RENT
+                        Debug.Log("PLAYER MIGHT PAY RENT && OWNER IS: " + owner.name);
+
+                        int rentToPay = CalculateUtilityRent();
+                        currentRent = rentToPay;
+                        // PAY THE RENT TO THE OWNER
+                        currentPlayer.PayRent(rentToPay, owner);
+
+                        // SHOW A MESSAGE ABOUT WHAT HAPPENED
+                        Debug.Log(currentPlayer.name + " pays rent of: " + rentToPay + " to " + owner.name);
+
+                    }
+                    else if (owner == null && currentPlayer.CanAffordNode(price))
+                    {
+                        // BUY THE NODE
+                        Debug.Log("PLAYER COULD BUY");
+                        currentPlayer.BuyProperty(this);
+                        OnOwnerUpdated();
+
+                        // SHOW A MESSAGE ABOUT WHAT HAPPENED
+                    }
+                    else
+                    {
+                        //IS UNOWNED AND WE CANT AFFORD IT
+                    }
+                }
+                else // HUMAN
+                {
+                    // IF IT OWNED && IF WE NOT ARE OWNER && IS NOT MORTGAGED
+                    if (owner != null && owner != currentPlayer && !isMortgaged)
+                    {
+                        // PAY RENT TO SOMEBODY
+
+                        // CALCULATE THE RENT
+
+                        // PAY THE RENT TO THE OWNER
+
+                        // SHOW A MESSAGE ABOUT WHAT HAPPENED
+                    }
+                    else if (owner == null /* && IF CAN AFFORD */)
+                    {
+                        //SHOW BUY INTERFACE
+
+                        // SHOW A MESSAGE ABOUT WHAT HAPPENED
+                    }
+                    else
+                    {
+                        //IS UNOWNED AND WE CANT AFFORD IT
+                    }
+                }
+                break;
+            case MonopolyNodeType.Railroad:
+                if (!playerIsHuman) // AI
+                {
+                    // IF IT OWNED && IF WE NOT ARE OWNER && IS NOT MORTGAGED
+                    if (owner != null && owner != currentPlayer && !isMortgaged)
+                    {
+                        // PAY RENT TO SOMEBODY
+
+                        // CALCULATE THE RENT
+                        Debug.Log("PLAYER MIGHT PAY RENT && OWNER IS: " + owner.name);
+
+                        int rentToPay = CalculateRailroadRent();
+                        currentRent = rentToPay;
+                        // PAY THE RENT TO THE OWNER
+                        currentPlayer.PayRent(rentToPay, owner);
+
+                        // SHOW A MESSAGE ABOUT WHAT HAPPENED
+                        Debug.Log(currentPlayer.name + " pays rent of: " + rentToPay + " to " + owner.name);
+
+                    }
+                    else if (owner == null && currentPlayer.CanAffordNode(price))
+                    {
+                        // BUY THE NODE
+                        Debug.Log("PLAYER COULD BUY");
+                        currentPlayer.BuyProperty(this);
+                        OnOwnerUpdated();
+
+                        // SHOW A MESSAGE ABOUT WHAT HAPPENED
+                    }
+                    else
+                    {
+                        //IS UNOWNED AND WE CANT AFFORD IT
+                    }
+                }
+                else // HUMAN
+                {
+                    // IF IT OWNED && IF WE NOT ARE OWNER && IS NOT MORTGAGED
+                    if (owner != null && owner != currentPlayer && !isMortgaged)
+                    {
+                        // PAY RENT TO SOMEBODY
+
+                        // CALCULATE THE RENT
+
+                        // PAY THE RENT TO THE OWNER
+
+                        // SHOW A MESSAGE ABOUT WHAT HAPPENED
+                    }
+                    else if (owner == null /* && IF CAN AFFORD */)
+                    {
+                        //SHOW BUY INTERFACE
+
+                        // SHOW A MESSAGE ABOUT WHAT HAPPENED
+                    }
+                    else
+                    {
+                        //IS UNOWNED AND WE CANT AFFORD IT
+                    }
+                }
+                break;
+            case MonopolyNodeType.Tax:
+                GameManager.instance.AddTaxToPool(price);
+                currentPlayer.PayMoney(price);
+                //SHOW A MASSAGE
+                break;
+            case MonopolyNodeType.FreeParking:
+                int tax = GameManager.instance.GetTaxPool();
+                currentPlayer.CollectMoney(tax);
+                //SHOW A MASSAGE
+                break;
+            case MonopolyNodeType.GoToJail:
+                break;
+            case MonopolyNodeType.Chance:
+                break;
+            case MonopolyNodeType.CommunityChest:
+                break;
+        }
+
 
         if (!playerIsHuman)
         {
@@ -169,5 +395,71 @@ public class MonopolyNode : MonoBehaviour
         GameManager.instance.SwitchPlayer();
     }
 
+    int CalculatePropertyRent()
+    {
+        switch (numberOfHouses)
+        {
+            case 0:
+                // CHECK IF OWNER HAS THE FULL SET OF THIS NODES
+                var (list, allSame) = MonopolyBoard.Instance.PlayerHasAllNodesOfSet(this);
+                if (allSame)
+                {
+                    currentRent = baseRent * 2;
+                }
+                else
+                {
+                    currentRent = baseRent;
+                }
+                break;
+            case 1:
+                currentRent = rentWithHouses[0];
+                break;
+            case 2:
+                currentRent = rentWithHouses[1];
+                break;
+            case 3:
+                currentRent = rentWithHouses[2];
+                break;
+            case 4:
+                currentRent = rentWithHouses[3];
+                break;
+            case 5: //HOTEL
+                currentRent = rentWithHouses[4];
+                break;
+        }
+        return currentRent;
+    }
+
+    int CalculateUtilityRent()
+    {
+        int result = 0;
+        int[] lastRolledDice = GameManager.instance.LastRolledDice();
+        var (list, allSame) = MonopolyBoard.Instance.PlayerHasAllNodesOfSet(this);
+        if (allSame)
+        {
+            result = (lastRolledDice[0] + lastRolledDice[1]) * 10;
+        }
+        else
+        {
+            result = (lastRolledDice[0] + lastRolledDice[1]) * 4;
+        }      
+        return result;
+    }
+
+    int CalculateRailroadRent()
+    {
+        int result = 0;
+        var (list, allSame) = MonopolyBoard.Instance.PlayerHasAllNodesOfSet(this);
+
+        int amount = 0;
+        foreach (var item in list)
+        {
+            amount += (item.owner == this.owner) ? 1 : 0;
+        }
+
+        result = baseRent * (int)Mathf.Pow(2, amount-1);
+
+        return result;
+    }
 
 }

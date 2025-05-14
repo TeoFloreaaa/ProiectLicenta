@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 [System.Serializable]
 public class Player
@@ -63,6 +64,59 @@ public class Player
         myInfo.SetPlayerCash(money);
     }
 
+    internal bool CanAffordNode(int price)
+    {
+        return price <= money;
+    }
+
+    public void BuyProperty(MonopolyNode node)
+    {
+        money -= node.price;
+        node.SetOwner(this);
+
+        // UPDATE UI
+        myInfo.SetPlayerCash(money);
+
+        // SET OWNERSHIP
+        myMonopolyNodes.Add(node);
+
+        // SORT ALL NODES BY PRICE
+        SortPropertiesByPrice();
+    }
+
+    void SortPropertiesByPrice()
+    {
+        myMonopolyNodes.OrderBy(_node => _node.price).ToList();
+    }
+
+    internal void PayRent(int rentAmount, Player owner)
+    {
+        // DONT HAVE ENOUGH MONEY
+        if (money < rentAmount)
+        {
+            // HANDLE INSUFFICIENT FUNDS > AI
+        }
+
+        money -= rentAmount;
+        owner.CollectMoney(rentAmount);
+
+        // UPDATE UI
+        myInfo.SetPlayerCash(money);
+    }
+
+    internal void PayMoney(int amount)
+    {
+        // DONT HAVE ENOUGH MONEY
+        if (money < amount)
+        {
+            // HANDLE INSUFFICIENT FUNDS > AI
+        }
+
+        money -= amount;
+
+        // UPDATE UI
+        myInfo.SetPlayerCash(money);
+    }
 
 
 }
