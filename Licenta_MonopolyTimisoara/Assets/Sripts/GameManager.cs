@@ -14,6 +14,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] int maxTurnsInJail = 3; // SETTING FOR HOW LONG IN JAIL
     [SerializeField] int startMoney = 1500;
     [SerializeField] int goMoney = 200;
+    public float secondsBetweenTurns = 2f;
     [Header("Player Info")]
     [SerializeField] GameObject playerInfoPrefab;
     [SerializeField] Transform playerPanel; // FOR THE playerInfo Prefabs to become parented to
@@ -32,6 +33,11 @@ public class GameManager : MonoBehaviour
 
     //PASS OVER GO TO GET THE MONEY
     public int GetGoMoney => goMoney;
+
+    //MESSAGE SYSTEM
+    public delegate void UpdateMessage(string message);
+    public static UpdateMessage OnUpdateMessage;
+
 
 
     void Awake()
@@ -101,13 +107,14 @@ public class GameManager : MonoBehaviour
             {
                 playerList[currentPlayer].SetOutOfJail();
                 doubleRollCount++;
-                playerList[currentPlayer].ResetNumTurnsInJail();
+                OnUpdateMessage.Invoke(playerList[currentPlayer].name + " <color=green>poate iesi din inchisoare pentru ca a dat o dubla!</color>");
                 // MOVE THE PLAYER
             }
             else if (playerList[currentPlayer].NumTurnsInJail >= maxTurnsInJail)
             {
                 // WE HAVE BEEN LONG ENOUGH HERE
                 playerList[currentPlayer].SetOutOfJail();
+                OnUpdateMessage.Invoke(playerList[currentPlayer].name + " <color=green>poate iesi din inchisoare pentru ca au trecut cele 3 ture</color>");
                 // ALLOWED TO LEAVE
             }
 
@@ -130,9 +137,9 @@ public class GameManager : MonoBehaviour
                 {
                     doubleRollCount = 0;
                     //GO TO JAIL
-
                     int indexOnBoard = MonopolyBoard.Instance.route.IndexOf(playerList[currentPlayer].MyMonopolyNode);
                     rolledADouble = false;
+                    OnUpdateMessage.Invoke(playerList[currentPlayer].name + " a dat de 3 ori dubla <color=red> si trebuie sa mearga la inchisoare! </color>" );
                     playerList[currentPlayer].GoToJail(indexOnBoard);
                     return;
                 }
@@ -144,22 +151,32 @@ public class GameManager : MonoBehaviour
         // MOVE ANYHOW IF ALLOWED
         if (allowedToMove)
         {
+            OnUpdateMessage.Invoke(playerList[currentPlayer].name + " a dat " + rolledDice[0] + " si "+ rolledDice[1]);
             StartCoroutine(DelayBeforeMove(rolledDice[0] + rolledDice[1]));
         }
         else
         {
-            SwitchPlayer();
+            OnUpdateMessage.Invoke(playerList[currentPlayer].name + " trebuie sa stea la inchisoare");
+
+           StartCoroutine(DelayBetweenSwitchPlayer());
         }
         // SHOW OR HIDE UI
     }
 
     IEnumerator DelayBeforeMove(int rolledDice)
     {
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(secondsBetweenTurns);
         // IF WE ARE ALLOWED TO MOVE WE DO SO
         gameBoard.MovePlayerToken(rolledDice, playerList[currentPlayer]);
         // ELSE WE SWITCH
     }
+
+    IEnumerator DelayBetweenSwitchPlayer()
+    {
+        yield return new WaitForSeconds(secondsBetweenTurns);
+        SwitchPlayer();
+    }
+
 
     public void SwitchPlayer()
     {

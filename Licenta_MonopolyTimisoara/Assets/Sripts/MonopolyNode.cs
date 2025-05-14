@@ -50,9 +50,12 @@ public class MonopolyNode : MonoBehaviour
     [SerializeField] GameObject ownerBar;
     [SerializeField] TMP_Text ownerText;
     Player owner;
-
     public Player Owner => owner;
-    
+
+    //MESSAGE SYSTEM
+    public delegate void UpdateMessage(string message);
+    public static UpdateMessage OnUpdateMessage;
+
     public void SetOwner(Player newOwner)
     {
         owner = newOwner;
@@ -189,7 +192,7 @@ public class MonopolyNode : MonoBehaviour
                         // PAY RENT TO SOMEBODY
 
                         // CALCULATE THE RENT
-                        Debug.Log("PLAYER MIGHT PAY RENT && OWNER IS: " + owner.name);
+                        //Debug.Log("PLAYER MIGHT PAY RENT && OWNER IS: " + owner.name);
 
                         int rentToPay = CalculatePropertyRent();
 
@@ -197,13 +200,13 @@ public class MonopolyNode : MonoBehaviour
                         currentPlayer.PayRent(rentToPay, owner);
 
                         // SHOW A MESSAGE ABOUT WHAT HAPPENED
-                        Debug.Log(currentPlayer.name + " pays rent of: " + rentToPay + " to " + owner.name);
+                        OnUpdateMessage.Invoke(currentPlayer.name + " trebuie sa-i plateasca: " + rentToPay + " lui " + owner.name);
 
                     }
                     else if (owner == null && currentPlayer.CanAffordNode(price))
                     {
                         // BUY THE NODE
-                        Debug.Log("PLAYER COULD BUY");
+                        OnUpdateMessage.Invoke(currentPlayer.name + " a cumparat" + this.name);
                         currentPlayer.BuyProperty(this);
                         OnOwnerUpdated();
 
@@ -248,7 +251,7 @@ public class MonopolyNode : MonoBehaviour
                         // PAY RENT TO SOMEBODY
 
                         // CALCULATE THE RENT
-                        Debug.Log("PLAYER MIGHT PAY RENT && OWNER IS: " + owner.name);
+                        
 
                         int rentToPay = CalculateUtilityRent();
                         currentRent = rentToPay;
@@ -256,13 +259,13 @@ public class MonopolyNode : MonoBehaviour
                         currentPlayer.PayRent(rentToPay, owner);
 
                         // SHOW A MESSAGE ABOUT WHAT HAPPENED
-                        Debug.Log(currentPlayer.name + " pays rent of: " + rentToPay + " to " + owner.name);
+                        OnUpdateMessage.Invoke(currentPlayer.name + " trebuie sa-i plateasca: " + rentToPay + " lui " + owner.name);
 
                     }
                     else if (owner == null && currentPlayer.CanAffordNode(price))
                     {
                         // BUY THE NODE
-                        Debug.Log("PLAYER COULD BUY");
+                        OnUpdateMessage.Invoke(currentPlayer.name + " a cumparat" + this.name);
                         currentPlayer.BuyProperty(this);
                         OnOwnerUpdated();
 
@@ -307,24 +310,22 @@ public class MonopolyNode : MonoBehaviour
                         // PAY RENT TO SOMEBODY
 
                         // CALCULATE THE RENT
-                        Debug.Log("PLAYER MIGHT PAY RENT && OWNER IS: " + owner.name);
-
+                        
                         int rentToPay = CalculateRailroadRent();
                         currentRent = rentToPay;
                         // PAY THE RENT TO THE OWNER
                         currentPlayer.PayRent(rentToPay, owner);
 
                         // SHOW A MESSAGE ABOUT WHAT HAPPENED
-                        Debug.Log(currentPlayer.name + " pays rent of: " + rentToPay + " to " + owner.name);
+                        OnUpdateMessage.Invoke(currentPlayer.name + " trebuie sa-i plateasca: " + rentToPay + " lui " + owner.name);
 
                     }
                     else if (owner == null && currentPlayer.CanAffordNode(price))
                     {
                         // BUY THE NODE
-                        Debug.Log("PLAYER COULD BUY");
+                        OnUpdateMessage.Invoke(currentPlayer.name + " a cumparat" + this.name);
                         currentPlayer.BuyProperty(this);
                         OnOwnerUpdated();
-
                         // SHOW A MESSAGE ABOUT WHAT HAPPENED
                     }
                     else
@@ -361,14 +362,17 @@ public class MonopolyNode : MonoBehaviour
                 GameManager.instance.AddTaxToPool(price);
                 currentPlayer.PayMoney(price);
                 //SHOW A MASSAGE
+                OnUpdateMessage.Invoke(currentPlayer.name + " trebuie sa plateasca " + price + " taxa");
                 break;
             case MonopolyNodeType.FreeParking:
                 int tax = GameManager.instance.GetTaxPool();
                 currentPlayer.CollectMoney(tax);
                 //SHOW A MASSAGE
+                OnUpdateMessage.Invoke(currentPlayer.name + " <color=green>a colectat </color>" + tax + " din taxe");
                 break;
             case MonopolyNodeType.GoToJail:
                 currentPlayer.GoToJail(30);
+                OnUpdateMessage.Invoke(currentPlayer.name + " <color=rad>trebuie sa mearga la inchisoare</color>");
                 continueTurn = false;
                 break;
             case MonopolyNodeType.Chance:
@@ -384,7 +388,7 @@ public class MonopolyNode : MonoBehaviour
 
         if (!playerIsHuman)
         {
-            Invoke("ContinueGame", 2f);
+            Invoke("ContinueGame", GameManager.instance.secondsBetweenTurns);
         }
         else
         {

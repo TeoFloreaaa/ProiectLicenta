@@ -25,6 +25,10 @@ public class Player
     // PLAYERINFO
     PlayerInfo myInfo;
 
+    //MESSAGE SYSTEM
+    public delegate void UpdateMessage(string message);
+    public static UpdateMessage OnUpdateMessage;
+
     // AI
     int aiMoneySavity = 200;
 
@@ -132,8 +136,7 @@ public class Player
     public void SetOutOfJail()
     {
         isInJail = false;
-        ResetNumTurnsInJail();
-
+        numTurnsInJail = 0;
     }
 
 int CalculateDistanceFromJail(int indexOnBoard)
@@ -159,10 +162,4 @@ int CalculateDistanceFromJail(int indexOnBoard)
     {
         numTurnsInJail++;
     }
-
-    public void ResetNumTurnsInJail()
-    {
-        numTurnsInJail = 0;
-    }
-
 }
