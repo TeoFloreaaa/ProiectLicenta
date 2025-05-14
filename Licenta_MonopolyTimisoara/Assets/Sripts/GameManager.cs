@@ -13,7 +13,7 @@ public class GameManager : MonoBehaviour
     [Header("Game Settings")]
     [SerializeField] int maxTurnsInJail = 3; // SETTING FOR HOW LONG IN JAIL
     [SerializeField] int startMoney = 1500;
-    [SerializeField] int goMoney = 500;
+    [SerializeField] int goMoney = 200;
     [Header("Player Info")]
     [SerializeField] GameObject playerInfoPrefab;
     [SerializeField] Transform playerPanel; // FOR THE playerInfo Prefabs to become parented to
@@ -24,6 +24,9 @@ public class GameManager : MonoBehaviour
     bool rolledADouble;
     int doubleRollCount;
 
+    //PASS OVER GO TO GET THE MONEY
+    public int GetGoMoney => goMoney;
+
 
     void Awake()
     {
@@ -33,6 +36,15 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         Initialize();
+        if (playerList[currentPlayer].playerType == Player.PlayerType.AI)
+        {
+            RollDice();
+            
+        }
+        else
+        {
+            // SHOW UI FOR HUMAN INPUTS
+        }        
     }
 
     void Initialize()
@@ -57,6 +69,7 @@ public class GameManager : MonoBehaviour
         // ANY ROLL DICE AND STORE THEM
         rolledDice[0] = Random.Range(1, 7);
         rolledDice[1] = Random.Range(1, 7);
+        Debug.Log("Rolled dice are: " + rolledDice[0] + " & " + rolledDice[1]);
 
         // CHECK FOR DOUBLE
         rolledADouble = rolledDice[0] == rolledDice[1];
@@ -68,16 +81,39 @@ public class GameManager : MonoBehaviour
         // CAN WE LEAVE JAIL
 
         // MOVE ANYHOW IF ALLOWED
-
+        StartCoroutine(DelayBeforeMove(rolledDice[0] + rolledDice[1]));
         // SHOW OR HIDE UI
     }
 
-    IEnumerator DelayBeforeMove()
+    IEnumerator DelayBeforeMove(int rolledDice)
     {
         yield return new WaitForSeconds(2f);
         // IF WE ARE ALLOWED TO MOVE WE DO SO
-
+        gameBoard.MovePlayerToken(rolledDice, playerList[currentPlayer]);
         // ELSE WE SWITCH
     }
+
+    public void SwitchPlayer()
+    {
+        currentPlayer++;
+        // ROLLEDDOUBLE?
+
+        // OVERFLOW CHECK
+        if (currentPlayer >= playerList.Count)
+        {
+            currentPlayer = 0;
+        }
+
+        // CHECK IF IN JAIL
+
+        // IS PLAYER AI
+        if (playerList[currentPlayer].playerType == Player.PlayerType.AI)
+        {
+            RollDice();
+        }
+
+        // IF HUMAN - SHOW UI
+    }
+
 
 }

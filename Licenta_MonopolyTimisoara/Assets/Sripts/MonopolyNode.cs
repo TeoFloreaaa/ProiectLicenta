@@ -42,6 +42,7 @@ public class MonopolyNode : MonoBehaviour
     [SerializeField] int mortgageValue;
 
     [Header("Property Owner")]
+    public Player owner;
     [SerializeField] GameObject ownerBar;
     [SerializeField] TMP_Text ownerText;
 
@@ -90,22 +91,37 @@ public class MonopolyNode : MonoBehaviour
             priceText.text = "$ " + price;
         }
 
+        //UPDATE THE OWNER
+        OnOwnerUpdated();
+        UnMortgageProperty();       
     }
 
     // MORTGAGE CONTENT
     public int MortgageProperty()
     {
         isMortgaged = true;
-        mortgageImage.SetActive(true);
-        propertyImage.SetActive(false);
+        if (mortgageImage != null)
+        {
+            mortgageImage.SetActive(true);
+        }
+        if (propertyImage != null)
+        {
+            propertyImage.SetActive(false);
+        }
         return mortgageValue;
     }
 
     public void UnMortgageProperty()
     {
         isMortgaged = false;
-        mortgageImage.SetActive(false);
+        if (mortgageImage != null)
+        {
+            mortgageImage.SetActive(false);
+        }
+        if (propertyImage != null)
+        { 
         propertyImage.SetActive(true);
+        }
     }
 
     public bool IsMortgaged => isMortgaged;
@@ -116,10 +132,10 @@ public class MonopolyNode : MonoBehaviour
     {
         if (ownerBar != null)
         {
-            if (ownerText.text != "")
+            if (owner.name != "")
             {
                 ownerBar.SetActive(true);
-                // ownerText.text = owner.name;
+                ownerText.text = owner.name;
             }
             else
             {
@@ -128,5 +144,30 @@ public class MonopolyNode : MonoBehaviour
             }
         }
     }
+
+    public void PlayerLandedOnNode(Player currentPlayer)
+    {
+        bool playerIsHuman = currentPlayer.playerType == Player.PlayerType.HUMAN;
+
+        if (!playerIsHuman)
+        {
+            Invoke("ContinueGame", 2f);
+        }
+        else
+        {
+            // SHOW UI
+        }
+    }
+
+    void ContinueGame()
+    {
+        // IF THE LAST ROLL WAS A DOUBLE
+        // ROLL AGAIN
+
+        // NOT A DOUBLE ROLL
+        // SWITCH PLAYER
+        GameManager.instance.SwitchPlayer();
+    }
+
 
 }

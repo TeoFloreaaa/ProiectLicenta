@@ -593,6 +593,11 @@ MonoBehaviour:
   propertyImage: {fileID: 0}
   isMortgaged: 0
   mortgageValue: 0
+  owner:
+    playerType: 0
+    name: 
+    myToken: {fileID: 0}
+    myMonopolyNodes: []
   ownerBar: {fileID: 0}
   ownerText: {fileID: 0}
 --- !u!4 &71302187
@@ -654,6 +659,11 @@ MonoBehaviour:
   propertyImage: {fileID: 0}
   isMortgaged: 0
   mortgageValue: 0
+  owner:
+    playerType: 0
+    name: 
+    myToken: {fileID: 0}
+    myMonopolyNodes: []
   ownerBar: {fileID: 0}
   ownerText: {fileID: 0}
 --- !u!4 &86861647
@@ -1959,6 +1969,11 @@ MonoBehaviour:
   propertyImage: {fileID: 0}
   isMortgaged: 0
   mortgageValue: 0
+  owner:
+    playerType: 0
+    name: 
+    myToken: {fileID: 0}
+    myMonopolyNodes: []
   ownerBar: {fileID: 0}
   ownerText: {fileID: 0}
 --- !u!1 &404552700
@@ -2683,6 +2698,11 @@ MonoBehaviour:
   propertyImage: {fileID: 0}
   isMortgaged: 0
   mortgageValue: 0
+  owner:
+    playerType: 0
+    name: 
+    myToken: {fileID: 0}
+    myMonopolyNodes: []
   ownerBar: {fileID: 0}
   ownerText: {fileID: 0}
 --- !u!4 &663221433
@@ -4759,18 +4779,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameBoard: {fileID: 1229104771}
   playerList:
-  - playerType: 0
+  - playerType: 1
     name: Alina
     myToken: {fileID: 0}
     myMonopolyNodes: []
-  - playerType: 0
+  - playerType: 1
     name: Bob
     myToken: {fileID: 0}
     myMonopolyNodes: []
   currentPlayer: 0
   maxTurnsInJail: 3
   startMoney: 1500
-  goMoney: 500
+  goMoney: 200
   playerInfoPrefab: {fileID: 24638600555814734, guid: 82530d1b1a73cd843a4fa5534c8a70f4, type: 3}
   playerPanel: {fileID: 1109813989}
   playerTokenList:
