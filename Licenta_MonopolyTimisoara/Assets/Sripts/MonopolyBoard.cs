@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class MonopolyBoard : MonoBehaviour
 {
-    [SerializeField] List<MonopolyNode> route = new List<MonopolyNode>();
+    public List<MonopolyNode> route = new List<MonopolyNode>();
 
     void OnValidate()
     {
