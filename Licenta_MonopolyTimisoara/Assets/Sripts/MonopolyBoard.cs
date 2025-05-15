@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using Unity.VisualScripting.Antlr3.Runtime.Misc;
 
 public class MonopolyBoard : MonoBehaviour
 {
@@ -62,6 +63,31 @@ public class MonopolyBoard : MonoBehaviour
         StartCoroutine(MovePlayerInSteps(steps, player));
     }
 
+    public void MovePlayerToken(MonopolyNodeType type, Player player)
+    {
+        int indexOfNextNodeType = -1; // INDEX TO FIND
+        int indexOnBoard = route.IndexOf(player.MyMonopolyNode); // WHERE IS THE PLAYER
+        int startSearchIndex = (indexOnBoard + 1) % route.Count;
+        int nodeSearches = 0; // AMOUNT OF FIELDS SEARCHED
+
+        while (indexOfNextNodeType == -1 && nodeSearches < route.Count) // KEEP SEARCHING
+        {
+            if (route[startSearchIndex].monopolyNodeType == type) // FOUND THE DESIRED TYPE
+            {
+                indexOfNextNodeType = startSearchIndex;
+            }
+            startSearchIndex = (startSearchIndex + 1) % route.Count;
+            nodeSearches++;
+        }
+
+        if (indexOfNextNodeType == -1) // SECURITY EXIT
+        {
+            Debug.LogError("NO NODE FOUND");
+            return;
+        }
+
+        StartCoroutine(MovePlayerInSteps(nodeSearches, player));
+    }
 
     IEnumerator MovePlayerInSteps(int steps, Player player)
     {
@@ -154,5 +180,10 @@ public class MonopolyBoard : MonoBehaviour
 
         return (null, false);
     }
+
+    //-----------------------------REQUEST MISSING NODES-IN-SET-----------------------------
+
+    //-----------------------------CALCULATE DISTANCE BETWEEN NODES-----------------------------
+
 
 }

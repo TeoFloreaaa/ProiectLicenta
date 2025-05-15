@@ -4,29 +4,29 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 
-public class CommunityChest : MonoBehaviour
+public class ChanceField : MonoBehaviour
 {
-    [SerializeField] List<SCR_CommunityCard> cards = new List<SCR_CommunityCard>();
+    [SerializeField] List<SCR_ChanceCard> cards = new List<SCR_ChanceCard>();
     [SerializeField] TMP_Text cardText;
     [SerializeField] GameObject cardHolderBackground;
     [SerializeField] float showTime = 3; //HIDE CARD AUTOMATIC AFTER 3 Seconds
     [SerializeField] Button closeCardButton;
 
-    List<SCR_CommunityCard> cardPool = new List<SCR_CommunityCard>();
-    List<SCR_CommunityCard> usedCardPool = new List<SCR_CommunityCard>();
+    List<SCR_ChanceCard> cardPool = new List<SCR_ChanceCard>();
+    List<SCR_ChanceCard> usedCardPool = new List<SCR_ChanceCard>();
 
     //CURRENT CARD AND CURRENT PLAYER
-    SCR_CommunityCard pickedCard;
+    SCR_ChanceCard pickedCard;
     Player currentPlayer;
 
     void OnEnable()
     {
-        MonopolyNode.OnDrawCommunityCard += DrawCard;
+        MonopolyNode.OnDrawChanceCard += DrawCard;
     }
 
     void OnDisable()
     {
-        MonopolyNode.OnDrawCommunityCard -= DrawCard;
+        MonopolyNode.OnDrawChanceCard -= DrawCard;
     }
 
     void Start()
@@ -44,12 +44,11 @@ public class CommunityChest : MonoBehaviour
         for (int i = 0; i < cardPool.Count; i++)
         {
             int index = Random.Range(0, cardPool.Count);
-            SCR_CommunityCard tempCard = cardPool[index];
+            SCR_ChanceCard tempCard = cardPool[index];
             cardPool[index] = cardPool[i];
             cardPool[i] = tempCard;
         }
     }
-
 
     void DrawCard(Player cardTaker)
     {
@@ -66,7 +65,6 @@ public class CommunityChest : MonoBehaviour
             //SHUFFLE ALL
             ShuffleCards();
         }
-
 
         //WHO IS CURRENT PLAYER
         currentPlayer = cardTaker;
@@ -92,12 +90,12 @@ public class CommunityChest : MonoBehaviour
 
     public void ApplyCardEffect() //ON CLOSE BUTTON OF THE CARD
     {
-        bool isMoving  = false;
-        if (pickedCard.rewardMoney != 0 && !pickedCard.collectFromPlayer)
+        bool isMoving = false;
+        if (pickedCard.rewardMoney != 0)
         {
             currentPlayer.CollectMoney(pickedCard.rewardMoney);
         }
-        else if (pickedCard.penalityMoney != 0)
+        else if (pickedCard.penalityMoney != 0 && !pickedCard.payToPlayer)
         {
             currentPlayer.PayMoney(pickedCard.penalityMoney); //HANDLE INSUFF FUNDS
         }
@@ -120,7 +118,7 @@ public class CommunityChest : MonoBehaviour
             //START THE MOVE
             MonopolyBoard.Instance.MovePlayerToken(stepsToMove, currentPlayer);
         }
-        else if (pickedCard.collectFromPlayer)
+        else if (pickedCard.payToPlayer)
         {
             int totalCollected = 0;
             List<Player> allPlayers = GameManager.instance.GetPlayers;
@@ -130,12 +128,12 @@ public class CommunityChest : MonoBehaviour
                 if (player != currentPlayer)
                 {
                     //PREVENT BANKRUPCY
-                    int amount = Mathf.Min(player.ReadMoney, pickedCard.rewardMoney);
-                    player.PayMoney(amount);
+                    int amount = Mathf.Min(currentPlayer.ReadMoney, pickedCard.penalityMoney);
+                    player.CollectMoney(amount);
                     totalCollected += amount;
                 }
             }
-            currentPlayer.CollectMoney(totalCollected);
+            currentPlayer.PayMoney(totalCollected);
         }
         else if (pickedCard.streetRepairs)
         {
@@ -149,10 +147,27 @@ public class CommunityChest : MonoBehaviour
             isMoving = true;
             currentPlayer.GoToJail(MonopolyBoard.Instance.route.IndexOf(currentPlayer.MyMonopolyNode));
         }
-        else if(pickedCard.jailFreeCard)
+        else if (pickedCard.jailFreeCard)
         {
 
         }
+        else if (pickedCard.moveStepsBackwards != 0)
+        {
+            int steps = Mathf.Abs(pickedCard.moveStepsBackwards);
+            MonopolyBoard.Instance.MovePlayerToken(-steps, currentPlayer);
+            isMoving = true;
+        }
+        else if (pickedCard.nextRailroad)
+        {
+            MonopolyBoard.Instance.MovePlayerToken(MonopolyNodeType.Railroad, currentPlayer);
+            isMoving = true;
+        }
+        else if (pickedCard.nextUtility)
+        {
+            MonopolyBoard.Instance.MovePlayerToken(MonopolyNodeType.Utility, currentPlayer);
+            isMoving = true;
+        }
+
 
         cardHolderBackground.SetActive(false);
         ContinueGame(isMoving);
@@ -177,6 +192,4 @@ public class CommunityChest : MonoBehaviour
             // ...
         }
     }
-
 }
-
