@@ -36,6 +36,7 @@ public class Player
     public bool IsInJail => isInJail;
     public GameObject MyToken => myToken;
     public MonopolyNode MyMonopolyNode => currentnode;
+    public int ReadMoney => money;
 
     public void Initialize(MonopolyNode startNode, int startMoney, PlayerInfo info, GameObject token)
     {
@@ -131,6 +132,7 @@ public class Player
         //myToken.transform.position = MonopolyBoard.Instance.route[10].transform.position;
         //currentnode = MonopolyBoard.Instance.route[10];
         MonopolyBoard.Instance.MovePlayerToken(CalculateDistanceFromJail(indexOnBoard), this);
+        GameManager.instance.ResetRolledADouble();
     }
 
     public void SetOutOfJail()
@@ -139,7 +141,7 @@ public class Player
         numTurnsInJail = 0;
     }
 
-int CalculateDistanceFromJail(int indexOnBoard)
+    int CalculateDistanceFromJail(int indexOnBoard)
     {
         int result = 0;
         int indexOfJail = 10;
@@ -162,4 +164,44 @@ int CalculateDistanceFromJail(int indexOnBoard)
     {
         numTurnsInJail++;
     }
+
+    //--------------------------STREET REPAIRS--------------------------
+
+    public int[] CountHousesAndHotels()
+    {
+        int houses = 0; //GOES TO INDEX 0
+        int hotels = 0; //GOES TO INDEX 1
+
+        foreach (var node in myMonopolyNodes)
+        {
+            if (node.NumberOfHouses != 5)
+            {
+                houses += node.NumberOfHouses;
+            }
+            else
+            {
+                hotels += 1;
+            }
+        }
+
+        int[] allBuildings = new int[] { houses, hotels };
+        return allBuildings;
+    }
+
+    //------------------------HANDLE INSUFFICIENT FUNDS------------------------
+
+    //------------------------BANKRUPT-GAME-OVER------------------------
+
+    //------------------------UNMORTGAGE PROPERTY------------------------
+
+    //------------------------CHECK IF PLAYER HAS A PROPERTY SET------------------------
+
+    //------------------------BUILD HOUSES EVENLY ON NODE SETS------------------------
+
+    //------------------------TRADING SYSTEM------------------------
+
+    //------------------------FIND MISSING PROPERTY'S IN SET------------------------
+
+    //------------------------HOUSES AND HOTELS - CAN AFFORT AND COUNT------------------------
+
 }

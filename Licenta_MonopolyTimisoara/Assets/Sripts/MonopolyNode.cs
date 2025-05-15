@@ -39,6 +39,7 @@ public class MonopolyNode : MonoBehaviour
     [SerializeField] internal int baseRent;
     [SerializeField] internal List<int> rentWithHouses = new List<int>();
     int numberOfHouses;
+    public int NumberOfHouses => numberOfHouses;
 
     [Header("Property Mortgage")]
     [SerializeField] GameObject mortgageImage;
@@ -55,6 +56,15 @@ public class MonopolyNode : MonoBehaviour
     //MESSAGE SYSTEM
     public delegate void UpdateMessage(string message);
     public static UpdateMessage OnUpdateMessage;
+
+    //DRAG A COMMUNITY CARD
+    public delegate void DrawCommunityCard(Player player);
+    public static DrawCommunityCard OnDrawCommunityCard;
+
+    //DRAG A CHANCE CARD
+    public delegate void DrawChanceCard(Player player);
+    public static DrawChanceCard OnDrawChanceCard;
+
 
     public void SetOwner(Player newOwner)
     {
@@ -378,6 +388,8 @@ public class MonopolyNode : MonoBehaviour
             case MonopolyNodeType.Chance:
                 break;
             case MonopolyNodeType.CommunityChest:
+                OnDrawCommunityCard.Invoke(currentPlayer);
+                continueTurn = false;
                 break;
         }
         //STOP HERE IF NEEDED

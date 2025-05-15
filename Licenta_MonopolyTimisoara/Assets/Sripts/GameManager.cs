@@ -25,6 +25,7 @@ public class GameManager : MonoBehaviour
     bool rolledADouble;
     int doubleRollCount;
     public bool RolledADouble => rolledADouble;
+    public void ResetRolledADouble() => rolledADouble = false;
 
     public bool allwaysDR = true;
 
@@ -33,6 +34,7 @@ public class GameManager : MonoBehaviour
 
     //PASS OVER GO TO GET THE MONEY
     public int GetGoMoney => goMoney;
+    public List<Player> GetPlayers => playerList;
 
     //MESSAGE SYSTEM
     public delegate void UpdateMessage(string message);
@@ -87,8 +89,8 @@ public class GameManager : MonoBehaviour
 
         if (allwaysDR)
         {
-            rolledDice[0] = 2;
-            rolledDice[1] = 2;
+            rolledDice[0] = 1;
+            rolledDice[1] = 1;
         }
 
         Debug.Log("Rolled dice are: " + rolledDice[0] + " & " + rolledDice[1]);

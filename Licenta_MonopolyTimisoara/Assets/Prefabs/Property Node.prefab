@@ -662,11 +662,6 @@ MonoBehaviour:
   propertyImage: {fileID: 6364267475716442739}
   isMortgaged: 0
   mortgageValue: 0
-  owner:
-    playerType: 0
-    name: 
-    myToken: {fileID: 0}
-    myMonopolyNodes: []
   ownerBar: {fileID: 4007042775011471738}
   ownerText: {fileID: 2185020652191018080}
 --- !u!1 &6364267475716442739

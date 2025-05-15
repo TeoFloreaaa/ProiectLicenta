@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8a40cf7ad83b234fb5d88acdce1c7e6, type: 3}
+  m_Name: 1 go to start
+  m_EditorClassIdentifier: 
+  textOnCard: Fosta prietena iti mai acorda o sansa, iar tu faci toate eforturile
+    ca relatia sa fie ca la inceput. DU-TE LA START (PRIMESTI $200)
+  rewardMoney: 0
+  penalityMoney: 0
+  moveToBoardIndex: 0
+  collectFromPlayer: 0
+  streetRepairs: 0
+  goToJail: 0
+  jailFreeCard: 0
