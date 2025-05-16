@@ -32,14 +32,14 @@ public class MonopolyBoard : MonoBehaviour
             route.Add(node.GetComponent<MonopolyNode>());
         }
 
-        // UPDATE ALL NODE COLORS
-        //for (int i = 0; i < nodeSetList.Count; i++)
-        //{
-        //    for (int j = 0; j < nodeSetList[i].nodesInSetList.Count; j++)
-        //   {
-        //        nodeSetList[i].nodesInSetList[j].UpdateColorField(nodeSetList[i].setColor);
-        //    }
-        //}
+         //UPDATE ALL NODE COLORS
+        for (int i = 0; i < nodeSetList.Count; i++)
+        {
+            for (int j = 0; j < nodeSetList[i].nodesInSetList.Count; j++)
+           {
+                nodeSetList[i].nodesInSetList[j].UpdateColorField(nodeSetList[i].setColor);
+            }
+        }
 
     }
 
@@ -173,7 +173,6 @@ public class MonopolyBoard : MonoBehaviour
             {
                 // CHECK IFF ALL THE NODES IN SET HAVE THE SAME OWNER
                 bool allSame = nodeSet.nodesInSetList.All(_node => _node.Owner == node.Owner);
-
                 return (nodeSet.nodesInSetList, allSame);
             }
         }

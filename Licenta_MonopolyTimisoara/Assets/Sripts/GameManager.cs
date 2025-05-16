@@ -93,9 +93,7 @@ public class GameManager : MonoBehaviour
             rolledDice[1] = 1;
         }
 
-        rolledDice[0] = 3;
-        rolledDice[1] = 4;
-
+        
         Debug.Log("Rolled dice are: " + rolledDice[0] + " & " + rolledDice[1]);
 
         // CHECK FOR DOUBLE
