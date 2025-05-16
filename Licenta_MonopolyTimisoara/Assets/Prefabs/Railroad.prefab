@@ -471,11 +471,14 @@ MonoBehaviour:
   name: 
   nameText: {fileID: 6030216219163809267}
   price: 200
+  houseCost: 0
   priceText: {fileID: 2841451772901260634}
   calculateRentAuto: 1
   currentRent: 0
   baseRent: 25
   rentWithHouses: 
+  houses: []
+  hotel: {fileID: 0}
   mortgageImage: {fileID: 3802269652310765701}
   propertyImage: {fileID: 2116409431329464833}
   isMortgaged: 0

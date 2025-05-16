@@ -534,10 +534,10 @@ public class MonopolyNode : MonoBehaviour
                 houses[1].SetActive(true);
                 houses[2].SetActive(true);
                 houses[3].SetActive(true);
-                hotel.SetActive(true);
+                hotel.SetActive(false);
                 break;
             case 5:
-                houses[0].SetActive(true);
+                houses[0].SetActive(false);
                 houses[1].SetActive(false);
                 houses[2].SetActive(false);
                 houses[3].SetActive(false);
@@ -555,13 +555,14 @@ public class MonopolyNode : MonoBehaviour
         }
     }
 
-    public void SellHouseOrHotel()
+    public int SellHouseOrHotel()
     {
         if (monopolyNodeType == MonopolyNodeType.Property)
         {
             numberOfHouses--;
-            VisualizeHouses();
+            VisualizeHouses();  
         }
+        return houseCost;
     }
 
     public void ResetNode()
@@ -583,6 +584,7 @@ public class MonopolyNode : MonoBehaviour
 
         //RESET THE OWNER
         //REMOVE PROPERTY FROM OWNER
+        owner.RemoveProperty(this);
         owner.name = "";
 
         //UPDATE UI
