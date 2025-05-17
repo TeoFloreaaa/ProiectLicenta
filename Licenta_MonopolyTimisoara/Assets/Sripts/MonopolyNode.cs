@@ -69,10 +69,26 @@ public class MonopolyNode : MonoBehaviour
     public delegate void DrawChanceCard(Player player);
     public static DrawChanceCard OnDrawChanceCard;
 
+    //HUMAN INPUT PANEL
+    public delegate void ShowHumanPanel(bool activatePanel, bool activateRollDice, bool activateEndTurn);
+    public static ShowHumanPanel OnShowHumanPanel;
+
+    //PROPERTY BUY PANEL
+    public delegate void ShowPropertyBuyPanel(MonopolyNode node, Player player);
+    public static ShowPropertyBuyPanel OnShowPropertyBuyPanel;
+
+    //RAILROAD BUY PANEL
+    public delegate void ShowRailroadBuyPanel(MonopolyNode node, Player player);
+    public static ShowRailroadBuyPanel OnShowRailroadBuyPanel;
+
+    //UTILITY BUY PANEL
+    public delegate void ShowUtilityBuyPanel(MonopolyNode node, Player player);
+    public static ShowRailroadBuyPanel OnShowUtilityBuyPanel;
 
     public void SetOwner(Player newOwner)
     {
         owner = newOwner;
+        OnOwnerUpdated();
     }
 
     private void OnValidate()
@@ -203,10 +219,7 @@ public class MonopolyNode : MonoBehaviour
                     if (owner != null && owner != currentPlayer && !isMortgaged)
                     {
                         // PAY RENT TO SOMEBODY
-
                         // CALCULATE THE RENT
-                        //Debug.Log("PLAYER MIGHT PAY RENT && OWNER IS: " + owner.name);
-
                         int rentToPay = CalculatePropertyRent();
 
                         // PAY THE RENT TO THE OWNER
@@ -221,7 +234,7 @@ public class MonopolyNode : MonoBehaviour
                         // BUY THE NODE
                         OnUpdateMessage.Invoke(currentPlayer.name + " a cumparat" + this.name);
                         currentPlayer.BuyProperty(this);
-                        OnOwnerUpdated();
+                        //OnOwnerUpdated();
 
                         // SHOW A MESSAGE ABOUT WHAT HAPPENED
                     }
@@ -236,17 +249,18 @@ public class MonopolyNode : MonoBehaviour
                     if (owner != null && owner != currentPlayer && !isMortgaged)
                     {
                         // PAY RENT TO SOMEBODY
-
                         // CALCULATE THE RENT
+                        int rentToPay = CalculatePropertyRent();
 
                         // PAY THE RENT TO THE OWNER
+                        currentPlayer.PayRent(rentToPay, owner);
 
                         // SHOW A MESSAGE ABOUT WHAT HAPPENED
                     }
                     else if (owner == null /* && IF CAN AFFORD */)
                     {
                         //SHOW BUY INTERFACE
-
+                        OnShowPropertyBuyPanel.Invoke(this, currentPlayer);
                         // SHOW A MESSAGE ABOUT WHAT HAPPENED
                     }
                     else
@@ -262,10 +276,7 @@ public class MonopolyNode : MonoBehaviour
                     if (owner != null && owner != currentPlayer && !isMortgaged)
                     {
                         // PAY RENT TO SOMEBODY
-
                         // CALCULATE THE RENT
-                        
-
                         int rentToPay = CalculateUtilityRent();
                         currentRent = rentToPay;
                         // PAY THE RENT TO THE OWNER
@@ -295,17 +306,18 @@ public class MonopolyNode : MonoBehaviour
                     if (owner != null && owner != currentPlayer && !isMortgaged)
                     {
                         // PAY RENT TO SOMEBODY
-
                         // CALCULATE THE RENT
-
+                        int rentToPay = CalculateUtilityRent();
+                        currentRent = rentToPay;
                         // PAY THE RENT TO THE OWNER
+                        currentPlayer.PayRent(rentToPay, owner);
 
                         // SHOW A MESSAGE ABOUT WHAT HAPPENED
                     }
                     else if (owner == null /* && IF CAN AFFORD */)
                     {
                         //SHOW BUY INTERFACE
-
+                        OnShowUtilityBuyPanel.Invoke(this, currentPlayer);
                         // SHOW A MESSAGE ABOUT WHAT HAPPENED
                     }
                     else
@@ -321,9 +333,7 @@ public class MonopolyNode : MonoBehaviour
                     if (owner != null && owner != currentPlayer && !isMortgaged)
                     {
                         // PAY RENT TO SOMEBODY
-
                         // CALCULATE THE RENT
-                        
                         int rentToPay = CalculateRailroadRent();
                         currentRent = rentToPay;
                         // PAY THE RENT TO THE OWNER
@@ -352,17 +362,18 @@ public class MonopolyNode : MonoBehaviour
                     if (owner != null && owner != currentPlayer && !isMortgaged)
                     {
                         // PAY RENT TO SOMEBODY
-
                         // CALCULATE THE RENT
-
+                        int rentToPay = CalculateRailroadRent();
+                        currentRent = rentToPay;
                         // PAY THE RENT TO THE OWNER
+                        currentPlayer.PayRent(rentToPay, owner);
 
                         // SHOW A MESSAGE ABOUT WHAT HAPPENED
                     }
                     else if (owner == null /* && IF CAN AFFORD */)
                     {
                         //SHOW BUY INTERFACE
-
+                        OnShowRailroadBuyPanel.Invoke(this, currentPlayer);
                         // SHOW A MESSAGE ABOUT WHAT HAPPENED
                     }
                     else
@@ -385,7 +396,7 @@ public class MonopolyNode : MonoBehaviour
                 break;
             case MonopolyNodeType.GoToJail:
                 currentPlayer.GoToJail(30);
-                OnUpdateMessage.Invoke(currentPlayer.name + " <color=rad>trebuie sa mearga la inchisoare</color>");
+                OnUpdateMessage.Invoke(currentPlayer.name + " <color=red>trebuie sa mearga la inchisoare</color>");
                 continueTurn = false;
                 break;
             case MonopolyNodeType.Chance:
@@ -410,6 +421,7 @@ public class MonopolyNode : MonoBehaviour
         else
         {
             // SHOW UI
+            OnShowHumanPanel.Invoke(true, GameManager.instance.RolledADouble, !GameManager.instance.RolledADouble);
         }
     }
 

@@ -29,6 +29,10 @@ public class Player
     public delegate void UpdateMessage(string message);
     public static UpdateMessage OnUpdateMessage;
 
+    //HUMAN INPUT PANEL
+    public delegate void ShowHumanPanel(bool activatePanel, bool activateRollDice, bool activateEndTurn);
+    public static ShowHumanPanel OnShowHumanPanel;
+
     // AI
     int aiMoneySavity = 200;
 
@@ -104,8 +108,15 @@ public class Player
         // DONT HAVE ENOUGH MONEY
         if (money < rentAmount)
         {
-            // HANDLE INSUFFICIENT FUNDS > AI
-            HandleInsufficientFunds(rentAmount);
+            if (playerType == PlayerType.AI)
+            {
+                // HANDLE INSUFFICIENT FUNDS > AI
+                HandleInsufficientFunds(rentAmount);
+            }
+            else
+            {
+                OnShowHumanPanel.Invoke(true, false, false);
+            }
         }
 
         money -= rentAmount;
@@ -120,8 +131,15 @@ public class Player
         // DONT HAVE ENOUGH MONEY
         if (money < amount)
         {
-            // HANDLE INSUFFICIENT FUNDS > AI
-            HandleInsufficientFunds(amount);
+            if (playerType == PlayerType.AI)
+            {
+                // HANDLE INSUFFICIENT FUNDS > AI
+                HandleInsufficientFunds(amount);
+            }
+            else 
+            {
+                OnShowHumanPanel.Invoke(true, false, false);
+            }
         }
 
         money -= amount;

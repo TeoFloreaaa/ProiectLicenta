@@ -20,6 +20,13 @@ public class GameManager : MonoBehaviour
     [SerializeField] Transform playerPanel; // FOR THE playerInfo Prefabs to become parented to
     [SerializeField] List<GameObject> playerTokenList = new List<GameObject>();
 
+    //DEBUG
+    [SerializeField] bool alwaysDoubleRoll = false;
+    [SerializeField] bool forceDiceRolls;
+    [SerializeField] int dice1;
+    [SerializeField] int dice2;
+
+
     // ABOUT THE ROLLING DICE
     int[] rolledDice;
     bool rolledADouble;
@@ -39,6 +46,11 @@ public class GameManager : MonoBehaviour
     //MESSAGE SYSTEM
     public delegate void UpdateMessage(string message);
     public static UpdateMessage OnUpdateMessage;
+
+    //HUMAN INPUT PANEL
+    public delegate void ShowHumanPanel(bool activatePanel, bool activateRollDice, bool activateEndTurn);
+    public static ShowHumanPanel OnShowHumanPanel;
+
 
 
 
@@ -74,6 +86,15 @@ public class GameManager : MonoBehaviour
             playerList[i].Initialize(gameBoard.route[0], startMoney, info, newToken);
         }
         playerList[currentPlayer].ActivateSelector(true);
+
+        if (playerList[currentPlayer].playerType == Player.PlayerType.HUMAN)
+        {
+            OnShowHumanPanel.Invoke(true, true, false);
+        }
+        else 
+        {
+            OnShowHumanPanel.Invoke(false, false, false);
+        }
     }
 
     public void RollDice() // PRESS BUTTON FROM HUMAN - OR AUTO FROM AI
@@ -88,13 +109,20 @@ public class GameManager : MonoBehaviour
         rolledDice[0] = Random.Range(1, 7);
         rolledDice[1] = Random.Range(1, 7);
 
-        if (allwaysDR)
+        //DEBUG
+        if (alwaysDoubleRoll)
         {
             rolledDice[0] = 1;
             rolledDice[1] = 1;
         }
+        if (forceDiceRolls)
+        {
+            rolledDice[0] = dice1;
+            rolledDice[1] = dice2;
+        }
 
-        
+
+
         Debug.Log("Rolled dice are: " + rolledDice[0] + " & " + rolledDice[1]);
 
         // CHECK FOR DOUBLE
@@ -164,7 +192,12 @@ public class GameManager : MonoBehaviour
 
            StartCoroutine(DelayBetweenSwitchPlayer());
         }
+
         // SHOW OR HIDE UI
+        if (playerList[currentPlayer].playerType == Player.PlayerType.HUMAN)
+        {
+            OnShowHumanPanel.Invoke(true, false, false);
+        }
     }
 
     IEnumerator DelayBeforeMove(int rolledDice)
@@ -202,6 +235,11 @@ public class GameManager : MonoBehaviour
         if (playerList[currentPlayer].playerType == Player.PlayerType.AI)
         {
             RollDice();
+            OnShowHumanPanel.Invoke(false, false, false);
+        }
+        else
+        {
+            OnShowHumanPanel.Invoke(true, true, false);
         }
 
         // IF HUMAN - SHOW UI
