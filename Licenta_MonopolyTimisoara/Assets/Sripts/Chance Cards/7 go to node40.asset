@@ -15,7 +15,7 @@ MonoBehaviour:
   textOnCard: Du-te la node40
   rewardMoney: 0
   penalityMoney: 0
-  moveToBoardIndex: 40
+  moveToBoardIndex: 39
   payToPlayer: 0
   nextRailroad: 0
   nextUtility: 0

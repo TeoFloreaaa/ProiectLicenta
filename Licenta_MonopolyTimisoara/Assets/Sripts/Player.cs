@@ -21,6 +21,7 @@ public class Player
 
     [SerializeField] GameObject myToken;
     [SerializeField] List<MonopolyNode> myMonopolyNodes = new List<MonopolyNode>();
+    public List<MonopolyNode> GetMonopolyNodes => myMonopolyNodes;
 
     // PLAYERINFO
     PlayerInfo myInfo;
@@ -76,6 +77,15 @@ public class Player
     {
         money += amount;
         myInfo.SetPlayerCash(money);
+        if (playerType == PlayerType.HUMAN && GameManager.instance.GetCurrentPlayer == this)
+        {
+            bool canEndTurn = !GameManager.instance.RolledADouble && ReadMoney >= 0;
+            bool canRollDice = GameManager.instance.RolledADouble && ReadMoney >= 0;
+
+            // SHOW UI
+            OnShowHumanPanel.Invoke(true, canRollDice, canEndTurn);
+        }
+
     }
 
     internal bool CanAffordNode(int price)
@@ -100,7 +110,7 @@ public class Player
 
     void SortPropertiesByPrice()
     {
-        myMonopolyNodes.OrderBy(_node => _node.price).ToList();
+        myMonopolyNodes = myMonopolyNodes.OrderBy(_node => _node.price).ToList();
     }
 
     internal void PayRent(int rentAmount, Player owner)
@@ -146,6 +156,16 @@ public class Player
 
         // UPDATE UI
         myInfo.SetPlayerCash(money);
+
+        if (playerType == PlayerType.HUMAN && GameManager.instance.GetCurrentPlayer == this)
+        {
+            bool canEndTurn = !GameManager.instance.RolledADouble && ReadMoney >= 0;
+            bool canRollDice = GameManager.instance.RolledADouble && ReadMoney >= 0;
+
+            // SHOW UI
+            OnShowHumanPanel.Invoke(true, canRollDice, canEndTurn);
+        }
+
     }
 
     //----------------JAIL---------------------
@@ -215,7 +235,7 @@ public class Player
 
     //------------------------HANDLE INSUFFICIENT FUNDS------------------------
 
-    void HandleInsufficientFunds(int amountToPay)
+    public void HandleInsufficientFunds(int amountToPay)
     {
         int housesToSell = 0; // AVAILABLE HOUSES TO SELL
         int allHouses = 0;
@@ -361,7 +381,7 @@ public class Player
 
     //------------------------BUILD HOUSES EVENLY ON NODE SETS------------------------
 
-    void BuildHouseOrHotelEvenly(List<MonopolyNode> nodesToBuildOn)
+    internal void BuildHouseOrHotelEvenly(List<MonopolyNode> nodesToBuildOn)
     {
         int minHouses = int.MaxValue;
         int maxHouses = int.MinValue;
@@ -392,6 +412,30 @@ public class Player
         }
     }
 
+    internal void SellHouseEvenly(List<MonopolyNode> nodesToSellFrom)
+    {
+        int minHouses = int.MaxValue;
+        bool houseSold = false;
+        foreach (var node in nodesToSellFrom)
+        {
+            minHouses = Mathf.Min(minHouses, node.NumberOfHouses);
+        }
+        //SELL HOUSE
+        for (int i = nodesToSellFrom.Count - 1; i >= 0; i--)
+        {
+            if (nodesToSellFrom[i].NumberOfHouses > minHouses)
+            {
+                CollectMoney(nodesToSellFrom[i].SellHouseOrHotel());
+                houseSold = true;
+                break;
+            }
+        }
+        if (!houseSold)
+        {
+            CollectMoney(nodesToSellFrom[nodesToSellFrom.Count - 1].SellHouseOrHotel());
+        }
+
+    }
 
     //------------------------TRADING SYSTEM------------------------
 
@@ -399,7 +443,7 @@ public class Player
 
     //------------------------HOUSES AND HOTELS - CAN AFFORT AND COUNT------------------------
 
-    bool CanAffordHouse(int price)
+    public bool CanAffordHouse(int price)
     {
         if (playerType == PlayerType.AI)
         {

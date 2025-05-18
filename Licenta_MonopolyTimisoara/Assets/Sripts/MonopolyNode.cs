@@ -256,6 +256,7 @@ public class MonopolyNode : MonoBehaviour
                         currentPlayer.PayRent(rentToPay, owner);
 
                         // SHOW A MESSAGE ABOUT WHAT HAPPENED
+                        OnUpdateMessage.Invoke(currentPlayer.name + " trebuie sa-i plateasca: " + rentToPay + " lui " + owner.name);
                     }
                     else if (owner == null /* && IF CAN AFFORD */)
                     {
@@ -313,6 +314,7 @@ public class MonopolyNode : MonoBehaviour
                         currentPlayer.PayRent(rentToPay, owner);
 
                         // SHOW A MESSAGE ABOUT WHAT HAPPENED
+                        OnUpdateMessage.Invoke(currentPlayer.name + " trebuie sa-i plateasca: " + rentToPay + " lui " + owner.name);
                     }
                     else if (owner == null /* && IF CAN AFFORD */)
                     {
@@ -369,6 +371,7 @@ public class MonopolyNode : MonoBehaviour
                         currentPlayer.PayRent(rentToPay, owner);
 
                         // SHOW A MESSAGE ABOUT WHAT HAPPENED
+                        OnUpdateMessage.Invoke(currentPlayer.name + " trebuie sa-i plateasca: " + rentToPay + " lui " + owner.name);
                     }
                     else if (owner == null /* && IF CAN AFFORD */)
                     {
@@ -420,8 +423,11 @@ public class MonopolyNode : MonoBehaviour
         }
         else
         {
+            bool canEndTurn = !GameManager.instance.RolledADouble && currentPlayer.ReadMoney >= 0;
+            bool canRollDice = GameManager.instance.RolledADouble && currentPlayer.ReadMoney >= 0;
+
             // SHOW UI
-            OnShowHumanPanel.Invoke(true, GameManager.instance.RolledADouble, !GameManager.instance.RolledADouble);
+            OnShowHumanPanel.Invoke(true, canRollDice, canEndTurn);
         }
     }
 
@@ -569,12 +575,13 @@ public class MonopolyNode : MonoBehaviour
 
     public int SellHouseOrHotel()
     {
-        if (monopolyNodeType == MonopolyNodeType.Property)
+        if (monopolyNodeType == MonopolyNodeType.Property && numberOfHouses > 0)
         {
             numberOfHouses--;
-            VisualizeHouses();  
+            VisualizeHouses();
+            return houseCost;
         }
-        return houseCost;
+        return 0;
     }
 
     public void ResetNode()

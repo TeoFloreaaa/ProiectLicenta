@@ -42,6 +42,7 @@ public class GameManager : MonoBehaviour
     //PASS OVER GO TO GET THE MONEY
     public int GetGoMoney => goMoney;
     public List<Player> GetPlayers => playerList;
+    public Player GetCurrentPlayer => playerList[currentPlayer];
 
     //MESSAGE SYSTEM
     public delegate void UpdateMessage(string message);
