@@ -70,6 +70,7 @@ public class Player
 
             UnMortgageProperties();
             // CHECK IF HE COULD TRADE FOR MISSING PROPERTIES
+            TradingSystem.instace.FindMissingProperty(this);
         }
     }
 
@@ -318,13 +319,6 @@ public class Player
         GameManager.instance.RemovePlayer(this);
     }
 
-
-    public void RemoveProperty(MonopolyNode node)
-    {
-        myMonopolyNodes.Remove(node);
-    }
-
-
     //------------------------UNMORTGAGE PROPERTY------------------------
 
     void UnMortgageProperties()
@@ -437,9 +431,9 @@ public class Player
 
     }
 
-    //------------------------TRADING SYSTEM------------------------
+    //------------------------TRADING SYSTEM--------------------------------------------------
 
-    //------------------------FIND MISSING PROPERTY'S IN SET------------------------
+
 
     //------------------------HOUSES AND HOTELS - CAN AFFORT AND COUNT------------------------
 
@@ -456,6 +450,22 @@ public class Player
     public void ActivateSelector(bool active)
     {
         myInfo.ActivateArrow(active);
+    }
+
+    //------------------ADD AND REMOVE PROPERTIES----------------------------------------------
+
+    public void AddProperty(MonopolyNode node)
+    {
+        myMonopolyNodes.Add(node);
+        //SORT ALL NODES BY PRICE
+        SortPropertiesByPrice();
+    }
+
+    public void RemoveProperty(MonopolyNode node)
+    {
+        myMonopolyNodes.Remove(node);
+        //SORT ALL NODES BY PRICE
+        SortPropertiesByPrice();
     }
 
 }

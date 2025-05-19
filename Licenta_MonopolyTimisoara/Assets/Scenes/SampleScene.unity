@@ -19079,10 +19079,6 @@ MonoBehaviour:
     name: Bob
     myToken: {fileID: 0}
     myMonopolyNodes: []
-  - playerType: 0
-    name: Teo
-    myToken: {fileID: 0}
-    myMonopolyNodes: []
   currentPlayer: 0
   maxTurnsInJail: 3
   startMoney: 1500
@@ -21825,6 +21821,50 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1674680166}
   m_CullTransparentMesh: 1
+--- !u!1 &1674810800
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1674810801}
+  - component: {fileID: 1674810802}
+  m_Layer: 0
+  m_Name: TradingSystem
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1674810801
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1674810800}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 987.83154, y: 406.14658, z: -4.661954}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1674810802
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1674810800}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: acfb2ca75c4df0b4abff71a8a170b28b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1677122649
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -28074,3 +28114,4 @@ SceneRoots:
   - {fileID: 546836406}
   - {fileID: 595289632}
   - {fileID: 501083332}
+  - {fileID: 1674810801}

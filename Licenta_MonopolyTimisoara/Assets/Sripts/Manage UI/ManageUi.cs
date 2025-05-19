@@ -13,11 +13,6 @@ public class ManageUI : MonoBehaviour
     [SerializeField] GameObject propertySetPrefab; //
     [SerializeField] TMP_Text yourMoneyText;
     [SerializeField] TMP_Text systemMessageText;
-    [SerializeField] TMP_Text propertyNameText;
-
-    [SerializeField] Image iconImage;
-    [SerializeField] Sprite houseSprite, railroadSprite, utilitySprite;
-
 
     Player playerReference;
     List<GameObject> propertyPrefabs = new List<GameObject>();
