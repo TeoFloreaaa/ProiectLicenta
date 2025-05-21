@@ -33,6 +33,8 @@ public class GameManager : MonoBehaviour
     int doubleRollCount;
     public bool RolledADouble => rolledADouble;
     public void ResetRolledADouble() => rolledADouble = false;
+    bool hasRolledDice;
+    public bool HasRolledDice => hasRolledDice;
 
     public bool allwaysDR = true;
 
@@ -101,7 +103,7 @@ public class GameManager : MonoBehaviour
     public void RollDice() // PRESS BUTTON FROM HUMAN - OR AUTO FROM AI
     {
         bool allowedToMove = true;
-
+        hasRolledDice = true;
         
         // RESET LAST ROLL
         rolledDice = new int[2];
@@ -219,8 +221,11 @@ public class GameManager : MonoBehaviour
     public void SwitchPlayer()
     {
         currentPlayer++;
+        hasRolledDice = false;
+
         // ROLLEDDOUBLE?
         doubleRollCount = 0;
+
         // OVERFLOW CHECK
         if (currentPlayer >= playerList.Count)
         {
@@ -292,6 +297,29 @@ public class GameManager : MonoBehaviour
         foreach (var player in playerList)
         {
             player.ActivateSelector(false);
+        }
+    }
+
+    //--------------------------CONTINUE GAME STUFF----------------------
+
+    public void Continue()
+    {
+        Invoke("ContinueGame", secondsBetweenTurns);
+    }
+
+    void ContinueGame()
+    {
+        // IF THE LAST ROLL WAS A DOUBLE
+        if (RolledADouble)
+        {
+            // ROLL AGAIN
+            RollDice();
+        }
+        else
+        {
+            // NOT A DOUBLE ROLL
+            // SWITCH PLAYER
+            SwitchPlayer();
         }
     }
 

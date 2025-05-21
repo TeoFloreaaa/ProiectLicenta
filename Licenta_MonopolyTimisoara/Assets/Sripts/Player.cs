@@ -34,6 +34,16 @@ public class Player
     public delegate void ShowHumanPanel(bool activatePanel, bool activateRollDice, bool activateEndTurn);
     public static ShowHumanPanel OnShowHumanPanel;
 
+    //AI STATES
+    public enum AiStates
+    {
+        IDLE,
+        TRADING
+    }
+
+    public AiStates aiState;
+
+
     // AI
     int aiMoneySavity = 200;
 
@@ -70,7 +80,7 @@ public class Player
 
             UnMortgageProperties();
             // CHECK IF HE COULD TRADE FOR MISSING PROPERTIES
-            TradingSystem.instace.FindMissingProperty(this);
+            
         }
     }
 
@@ -80,8 +90,8 @@ public class Player
         myInfo.SetPlayerCash(money);
         if (playerType == PlayerType.HUMAN && GameManager.instance.GetCurrentPlayer == this)
         {
-            bool canEndTurn = !GameManager.instance.RolledADouble && ReadMoney >= 0;
-            bool canRollDice = GameManager.instance.RolledADouble && ReadMoney >= 0;
+            bool canEndTurn = !GameManager.instance.RolledADouble && ReadMoney >= 0 && GameManager.instance.HasRolledDice;
+            bool canRollDice = (GameManager.instance.RolledADouble && ReadMoney >= 0) || (!GameManager.instance.HasRolledDice && ReadMoney >= 0);
 
             // SHOW UI
             OnShowHumanPanel.Invoke(true, canRollDice, canEndTurn);
@@ -160,8 +170,8 @@ public class Player
 
         if (playerType == PlayerType.HUMAN && GameManager.instance.GetCurrentPlayer == this)
         {
-            bool canEndTurn = !GameManager.instance.RolledADouble && ReadMoney >= 0;
-            bool canRollDice = GameManager.instance.RolledADouble && ReadMoney >= 0;
+            bool canEndTurn = !GameManager.instance.RolledADouble && ReadMoney >= 0 && GameManager.instance.HasRolledDice;
+            bool canRollDice = (GameManager.instance.RolledADouble && ReadMoney >= 0) || (!GameManager.instance.HasRolledDice && ReadMoney >= 0);
 
             // SHOW UI
             OnShowHumanPanel.Invoke(true, canRollDice, canEndTurn);
@@ -467,5 +477,36 @@ public class Player
         //SORT ALL NODES BY PRICE
         SortPropertiesByPrice();
     }
+
+    //-----------------------------AI STATE MACHINE-------------------------------------------
+
+    public void ChangeState(AiStates state)
+    {
+        if (playerType == PlayerType.HUMAN)
+        {
+            return;
+        }
+
+        aiState = state;
+        switch (aiState)
+        {
+            case AiStates.IDLE:
+            {
+                    // CONTINUE THE GAME
+                    //ContinueGame();
+                    GameManager.instance.Continue();
+                }
+            break;
+
+            case AiStates.TRADING:
+            {
+                    // HOLD THE GAME UNTIL CONTINUED
+                    TradingSystem.instace.FindMissingProperty(this);
+                }
+            break;
+        }
+    }
+
+    
 
 }

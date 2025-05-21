@@ -232,7 +232,7 @@ public class MonopolyNode : MonoBehaviour
                     else if (owner == null && currentPlayer.CanAffordNode(price))
                     {
                         // BUY THE NODE
-                        OnUpdateMessage.Invoke(currentPlayer.name + " a cumparat" + this.name);
+                        OnUpdateMessage.Invoke(currentPlayer.name + " a cumparat " + this.name);
                         currentPlayer.BuyProperty(this);
                         //OnOwnerUpdated();
 
@@ -290,7 +290,7 @@ public class MonopolyNode : MonoBehaviour
                     else if (owner == null && currentPlayer.CanAffordNode(price))
                     {
                         // BUY THE NODE
-                        OnUpdateMessage.Invoke(currentPlayer.name + " a cumparat" + this.name);
+                        OnUpdateMessage.Invoke(currentPlayer.name + " a cumparat " + this.name);
                         currentPlayer.BuyProperty(this);
                         OnOwnerUpdated();
 
@@ -348,7 +348,7 @@ public class MonopolyNode : MonoBehaviour
                     else if (owner == null && currentPlayer.CanAffordNode(price))
                     {
                         // BUY THE NODE
-                        OnUpdateMessage.Invoke(currentPlayer.name + " a cumparat" + this.name);
+                        OnUpdateMessage.Invoke(currentPlayer.name + " a cumparat " + this.name);
                         currentPlayer.BuyProperty(this);
                         OnOwnerUpdated();
                         // SHOW A MESSAGE ABOUT WHAT HAPPENED
@@ -395,7 +395,7 @@ public class MonopolyNode : MonoBehaviour
                 int tax = GameManager.instance.GetTaxPool();
                 currentPlayer.CollectMoney(tax);
                 //SHOW A MASSAGE
-                OnUpdateMessage.Invoke(currentPlayer.name + " <color=green>a colectat </color>" + tax + " din taxe");
+                OnUpdateMessage.Invoke(currentPlayer.name + " <color=green>a colectat </color>$" + tax + " taxe");
                 break;
             case MonopolyNodeType.GoToJail:
                 currentPlayer.GoToJail(30);
@@ -419,7 +419,8 @@ public class MonopolyNode : MonoBehaviour
 
         if (!playerIsHuman)
         {
-            Invoke("ContinueGame", GameManager.instance.secondsBetweenTurns);
+            //Invoke("ContinueGame", GameManager.instance.secondsBetweenTurns);
+            currentPlayer.ChangeState(Player.AiStates.TRADING);
         }
         else
         {
@@ -431,22 +432,21 @@ public class MonopolyNode : MonoBehaviour
         }
     }
 
-    void ContinueGame()
-    {
-        // IF THE LAST ROLL WAS A DOUBLE
-        if (GameManager.instance.RolledADouble)
-        {
-            // ROLL AGAIN
-            GameManager.instance.RollDice();
-        }
-        else
-        {
-            // NOT A DOUBLE ROLL
-            // SWITCH PLAYER
-            GameManager.instance.SwitchPlayer();
-        }
-
-    }
+    //void ContinueGame()
+    //{
+    //    // IF THE LAST ROLL WAS A DOUBLE
+    //    if (GameManager.instance.RolledADouble)
+    //    {
+    //        // ROLL AGAIN
+    //        GameManager.instance.RollDice();
+    //    }
+    //    else
+    //    {
+    //        // NOT A DOUBLE ROLL
+    //        // SWITCH PLAYER
+    //        GameManager.instance.SwitchPlayer();
+    //   }
+    //}
 
     int CalculatePropertyRent()
     {
@@ -605,7 +605,8 @@ public class MonopolyNode : MonoBehaviour
         //REMOVE PROPERTY FROM OWNER
         owner.RemoveProperty(this);
         owner.name = "";
-
+        owner.ActivateSelector(false);
+        owner = null;
         //UPDATE UI
         OnOwnerUpdated();
     }

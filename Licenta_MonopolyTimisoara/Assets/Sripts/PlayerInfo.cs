@@ -12,11 +12,13 @@ public class PlayerInfo : MonoBehaviour
 
     public void SetPlayerName(string newName)
     {
-        playerNameText.text = newName;
+        playerNameText.color = Color.white;
+        playerNameText.text = newName;  
     }
 
     public void SetPlayerCash(int currentCash)
     {
+        playerCashText.color = Color.white;
         playerCashText.text = "$ " + currentCash;
     }
 
