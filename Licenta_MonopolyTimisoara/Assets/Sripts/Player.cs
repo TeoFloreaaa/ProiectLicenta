@@ -25,7 +25,7 @@ public class Player
 
     bool hasChanceJailFreeCard, hasCommunityJailFreeCard;
     public bool HasChanceJailFreeCard => hasChanceJailFreeCard;
-    public bool HasCommunityJailFreeCard => HasCommunityJailFreeCard;
+    public bool HasCommunityJailFreeCard => hasCommunityJailFreeCard;
 
     // PLAYERINFO
     PlayerInfo myInfo;

@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7bb116addfe6b74aa2d5a8d9d804592, type: 3}
   m_Name: 11 street repairs
   m_EditorClassIdentifier: 
-  textOnCard: Reparati bla bla
+  textOnCard: Fa reparatii generale la toate propietatile tale, pentru fiecare casa
+    platesti $25 iar pentru fiecare hotel platesti $100
   rewardMoney: 0
   penalityMoney: 0
   moveToBoardIndex: -1

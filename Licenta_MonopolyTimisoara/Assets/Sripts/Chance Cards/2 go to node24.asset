@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7bb116addfe6b74aa2d5a8d9d804592, type: 3}
   m_Name: 2 go to node24
   m_EditorClassIdentifier: 
-  textOnCard: Du-te la NODE24
+  textOnCard: Du-te la Bulevardul Republicii
   rewardMoney: 0
   penalityMoney: 0
   moveToBoardIndex: 24

@@ -488,7 +488,7 @@ public class MonopolyNode : MonoBehaviour
     int CalculateUtilityRent()
     {
         int result = 0;
-        int[] lastRolledDice = GameManager.instance.LastRolledDice();
+        List<int> lastRolledDice = GameManager.instance.LastRolledDice();
         var (list, allSame) = MonopolyBoard.Instance.PlayerHasAllNodesOfSet(this);
         if (allSame)
         {
