@@ -91,6 +91,8 @@ public class MonopolyBoard : MonoBehaviour
 
     IEnumerator MovePlayerInSteps(int steps, Player player)
     {
+        //WAIT 0.5 SECONDS
+        yield return new WaitForSeconds(0.5f);
         int stepsLeft = steps;
         GameObject tokenToMove = player.MyToken;
         int indexOnBoard = route.IndexOf(player.MyMonopolyNode);

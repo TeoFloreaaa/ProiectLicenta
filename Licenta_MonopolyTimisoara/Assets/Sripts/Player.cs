@@ -23,6 +23,10 @@ public class Player
     [SerializeField] List<MonopolyNode> myMonopolyNodes = new List<MonopolyNode>();
     public List<MonopolyNode> GetMonopolyNodes => myMonopolyNodes;
 
+    bool hasChanceJailFreeCard, hasCommunityJailFreeCard;
+    public bool HasChanceJailFreeCard => hasChanceJailFreeCard;
+    public bool HasCommunityJailFreeCard => HasCommunityJailFreeCard;
+
     // PLAYERINFO
     PlayerInfo myInfo;
 
@@ -31,7 +35,7 @@ public class Player
     public static UpdateMessage OnUpdateMessage;
 
     //HUMAN INPUT PANEL
-    public delegate void ShowHumanPanel(bool activatePanel, bool activateRollDice, bool activateEndTurn);
+    public delegate void ShowHumanPanel(bool activatePanel, bool activateRollDice, bool activateEndTurn, bool hasCommunityJailCard, bool hasChanceJailCard);
     public static ShowHumanPanel OnShowHumanPanel;
 
     //AI STATES
@@ -94,7 +98,7 @@ public class Player
             bool canRollDice = (GameManager.instance.RolledADouble && ReadMoney >= 0) || (!GameManager.instance.HasRolledDice && ReadMoney >= 0);
 
             // SHOW UI
-            OnShowHumanPanel.Invoke(true, canRollDice, canEndTurn);
+            OnShowHumanPanel.Invoke(true, canRollDice, canEndTurn, hasCommunityJailFreeCard, hasCommunityJailFreeCard);
         }
 
     }
@@ -136,7 +140,7 @@ public class Player
             }
             else
             {
-                OnShowHumanPanel.Invoke(true, false, false);
+                OnShowHumanPanel.Invoke(true, false, false, HasCommunityJailFreeCard, HasCommunityJailFreeCard);
             }
         }
 
@@ -159,7 +163,7 @@ public class Player
             }
             else 
             {
-                OnShowHumanPanel.Invoke(true, false, false);
+                OnShowHumanPanel.Invoke(true, false, false, hasCommunityJailFreeCard, hasCommunityJailFreeCard);
             }
         }
 
@@ -174,7 +178,7 @@ public class Player
             bool canRollDice = (GameManager.instance.RolledADouble && ReadMoney >= 0) || (!GameManager.instance.HasRolledDice && ReadMoney >= 0);
 
             // SHOW UI
-            OnShowHumanPanel.Invoke(true, canRollDice, canEndTurn);
+            OnShowHumanPanel.Invoke(true, canRollDice, canEndTurn, hasCommunityJailFreeCard, hasChanceJailFreeCard);
         }
 
     }
@@ -305,14 +309,16 @@ public class Player
             }
         }
 
-        //AT THIS POINT WE GO BANCKRUPT
-        Bankrupt();
+        if (playerType == PlayerType.AI)
+        {
+            //AT THIS POINT WE GO BANCKRUPT
+            Bankrupt();
+        }
     }
-
 
     //------------------------BANKRUPT-GAME-OVER------------------------
 
-    void Bankrupt()
+    public void Bankrupt()
     {
         //TAKE OUT THE PLAYER OF THE GAME
 
@@ -324,6 +330,17 @@ public class Player
         {
             myMonopolyNodes[i].ResetNode();
         }
+
+        if (hasChanceJailFreeCard)
+        {
+            ChanceField.instance.AddBackJailFreeCard();
+        }
+
+        if (hasCommunityJailFreeCard)
+        {
+            CommunityChest.instance.AddBackJailFreeCard();
+        }
+
 
         //REMOVE THE PLAYER
         GameManager.instance.RemovePlayer(this);
@@ -441,10 +458,6 @@ public class Player
 
     }
 
-    //------------------------TRADING SYSTEM--------------------------------------------------
-
-
-
     //------------------------HOUSES AND HOTELS - CAN AFFORT AND COUNT------------------------
 
     public bool CanAffordHouse(int price)
@@ -507,6 +520,39 @@ public class Player
         }
     }
 
-    
+    public void AddChanceJailFreeCard()
+    {
+        hasChanceJailFreeCard = true;
+    }
+
+    public void AddCommunityJailFreeCard()
+    {
+        hasCommunityJailFreeCard = true;
+    }
+
+    public void UseCommunityJailFreeCard()
+    {
+        if(!IsInJail)
+        { 
+            return; 
+        }
+        hasCommunityJailFreeCard = false;
+        SetOutOfJail();
+        CommunityChest.instance.AddBackJailFreeCard();
+        OnUpdateMessage.Invoke(name + " a folosit cartea IESI GRATIS DIN INCHISOARE");
+    }
+
+    public void UseChanceJailFreeCard()
+    {
+        if (!IsInJail)
+        {
+            return;
+        }
+        hasChanceJailFreeCard = false;
+        SetOutOfJail();
+        ChanceField.instance.AddBackJailFreeCard();
+        OnUpdateMessage.Invoke(name + " a folosit cartea IESI GRATIS DIN INCHISOARE");
+    }
+
 
 }
