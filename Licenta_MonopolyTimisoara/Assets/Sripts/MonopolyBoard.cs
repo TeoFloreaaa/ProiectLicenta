@@ -82,7 +82,7 @@ public class MonopolyBoard : MonoBehaviour
 
         if (indexOfNextNodeType == -1) // SECURITY EXIT
         {
-            Debug.LogError("NO NODE FOUND");
+            //Debug.LogError("NO NODE FOUND");
             return;
         }
 

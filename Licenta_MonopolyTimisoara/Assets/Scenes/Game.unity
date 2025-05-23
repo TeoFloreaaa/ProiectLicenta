@@ -28778,17 +28778,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameBoard: {fileID: 1229104771}
-  playerList:
-  - playerType: 0
-    name: Darth Vader
-    myToken: {fileID: 0}
-    myMonopolyNodes: []
-    aiState: 0
-  - playerType: 1
-    name: Bob
-    myToken: {fileID: 0}
-    myMonopolyNodes: []
-    aiState: 0
+  playerList: []
   currentPlayer: 0
   maxTurnsInJail: 3
   startMoney: 1500
@@ -28798,9 +28788,9 @@ MonoBehaviour:
   playerPanel: {fileID: 1109813989}
   playerTokenList:
   - {fileID: 4412887885206039692, guid: e6378506b43e0d34e839b7a238b6b9fc, type: 3}
-  - {fileID: 2069067157137062491, guid: 6578d338e890d494cb729d471554401d, type: 3}
   - {fileID: 8892275759709952147, guid: d1cdbc82ace59ee4c850871fc0698fe1, type: 3}
   - {fileID: 2901407223514723327, guid: 01b79fd1ec67d5141a913a3f7aacf547, type: 3}
+  - {fileID: 2069067157137062491, guid: 6578d338e890d494cb729d471554401d, type: 3}
   alwaysDoubleRoll: 0
   forceDiceRolls: 0
   dice1: 0

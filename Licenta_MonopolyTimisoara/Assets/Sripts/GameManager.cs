@@ -22,10 +22,10 @@ public class GameManager : MonoBehaviour
     [SerializeField] List<GameObject> playerTokenList = new List<GameObject>();
 
     //DEBUG
-    [SerializeField] bool alwaysDoubleRoll = false;
-    [SerializeField] bool forceDiceRolls;
-    [SerializeField] int dice1;
-    [SerializeField] int dice2;
+    //[SerializeField] bool alwaysDoubleRoll = false;
+    //[SerializeField] bool forceDiceRolls;
+    //[SerializeField] int dice1;
+    //[SerializeField] int dice2;
 
     [Header("Game Over/ Win Info")]
     [SerializeField] GameObject gameOverPanel;
@@ -77,6 +77,13 @@ public class GameManager : MonoBehaviour
         gameOverPanel.SetActive(false);
         Initialize();
         CameraSwitcher.instance.SwitchToTopDown();
+        StartCoroutine(StartGame());
+        OnUpdateMessage.Invoke("BINE ATI VENIT LA MONOPOLY TIMISOARA!<br>DISTRATI-VA!!!");
+    }
+
+    IEnumerator StartGame()
+    {
+        yield return new WaitForSeconds(3f);
         if (playerList[currentPlayer].playerType == Player.PlayerType.AI)
         {
             //RollDice();
@@ -84,14 +91,35 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            // SHOW UI FOR HUMAN INPUTS
+            //SHOW UI FOR HUMAN INPUTS
             OnShowHumanPanel.Invoke(true, true, false, false, false);
-        }        
+        }
     }
 
     void Initialize()
     {
-        for (int i = 0; i < playerList.Count; i++)
+        if (GameSettings.settingsList.Count == 0)
+        {
+            //Debug.LogError("Start the game from the Main Menu!");
+            return;
+        }
+
+        foreach (var setting in GameSettings.settingsList)
+        {
+            Player p1 = new Player();
+            p1.name = setting.playerName;
+            p1.playerType = (Player.PlayerType)setting.selectedType;
+
+            playerList.Add(p1);
+
+            GameObject infoObject = Instantiate(playerInfoPrefab, playerPanel, false);
+            PlayerInfo info = infoObject.GetComponent<PlayerInfo>();
+
+            GameObject newToken = Instantiate(playerTokenList[setting.selectedColor], gameBoard.route[0].transform.position, Quaternion.identity);
+            p1.Initialize(gameBoard.route[0], startMoney, info, newToken);
+        }
+
+        /*for (int i = 0; i < playerList.Count; i++)
         {
             GameObject infoObject = Instantiate(playerInfoPrefab, playerPanel, false);
             PlayerInfo info = infoObject.GetComponent<PlayerInfo>();
@@ -101,6 +129,8 @@ public class GameManager : MonoBehaviour
             GameObject newToken = Instantiate(playerTokenList[RandomIndex], gameBoard.route[0].transform.position, Quaternion.identity);
             playerList[i].Initialize(gameBoard.route[0], startMoney, info, newToken);
         }
+        */
+
         playerList[currentPlayer].ActivateSelector(true);
 
         if (playerList[currentPlayer].playerType == Player.PlayerType.HUMAN)
@@ -179,7 +209,7 @@ public class GameManager : MonoBehaviour
         //    rolledDice[1] = dice2;
         //}
 
-        Debug.Log("Rolled dice are: " + rolledDice[0] + " & " + rolledDice[1]);
+        //Debug.Log("Rolled dice are: " + rolledDice[0] + " & " + rolledDice[1]);
 
         // CHECK FOR DOUBLE
         rolledADouble = rolledDice[0] == rolledDice[1];
@@ -342,7 +372,7 @@ public class GameManager : MonoBehaviour
         if (playerList.Count == 1)
         {
             //WE HAVE A WINNER
-            Debug.Log(playerList[0].name + " IS THE WINNER");
+            //Debug.Log(playerList[0].name + " IS THE WINNER");
             OnUpdateMessage.Invoke(playerList[0].name + " IS THE WINNER");
             //STOP THE GAME LOOP ANYHOW
 
