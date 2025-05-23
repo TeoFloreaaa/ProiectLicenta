@@ -113,8 +113,10 @@ public class MonopolyBoard : MonoBehaviour
                 }
 
                 // GET START AND END POSITIONS
-                Vector3 startPos = tokenToMove.transform.position;
-                Vector3 endPos = route[indexOnBoard].transform.position;
+                //Vector3 startPos = tokenToMove.transform.position;
+                Transform center = route[indexOnBoard].transform.Find("CenterPoint");
+                Vector3 endPos = center != null ? center.position : route[indexOnBoard].transform.position;
+                //Vector3 endPos = route[indexOnBoard].transform.position;
 
                 // PERFORM THE MOVE
                 while (MoveToNextNode(tokenToMove, endPos, 10f))
@@ -140,7 +142,9 @@ public class MonopolyBoard : MonoBehaviour
 
                 // GET START AND END POSITIONS
                 //Vector3 startPos = tokenToMove.transform.position;
-                Vector3 endPos = route[indexOnBoard].transform.position;
+                //Vector3 endPos = route[indexOnBoard].transform.position;
+                Transform center = route[indexOnBoard].transform.Find("CenterPoint");
+                Vector3 endPos = center != null ? center.position : route[indexOnBoard].transform.position;
 
                 // PERFORM THE MOVE
                 while (MoveToNextNode(tokenToMove, endPos, 10f))

@@ -45,13 +45,8 @@ public class Dice : MonoBehaviour
             thrown = true;
             rb.useGravity = true;
             rb.isKinematic = false;
-            rb.AddTorque(Random.Range(0, 500), Random.Range(0, 500), Random.Range(0, 500));
+            rb.AddTorque(Random.Range(200, 1000), Random.Range(200, 1000), Random.Range(200, 1000));
         }
-        //else if (thrown && hasLanded)
-        //{
-        //      RESET DICE
-        //    Reset();
-        //}
     }
 
     void Reset()
@@ -69,7 +64,7 @@ public class Dice : MonoBehaviour
         thrown = true;
         rb.useGravity = true;
         rb.isKinematic = false;
-        rb.AddTorque(Random.Range(0, 500), Random.Range(0, 500), Random.Range(0, 500));
+        rb.AddTorque(Random.Range(200, 1000), Random.Range(200, 1000), Random.Range(200, 1000));
     }
 
     void SideValueCheck()

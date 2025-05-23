@@ -73,9 +73,9 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        currentPlayer = Random.Range(0, playerList.Count);
         gameOverPanel.SetActive(false);
         Initialize();
+        currentPlayer = Random.Range(0, playerList.Count);
         CameraSwitcher.instance.SwitchToTopDown();
         StartCoroutine(StartGame());
         OnUpdateMessage.Invoke("BINE ATI VENIT LA MONOPOLY TIMISOARA!<br>DISTRATI-VA!!!");
@@ -170,7 +170,10 @@ public class GameManager : MonoBehaviour
         CameraSwitcher.instance.SwitchToDice();
         bool jail1 = playerList[currentPlayer].HasCommunityJailFreeCard;
         bool jail2 = playerList[currentPlayer].HasChanceJailFreeCard;
-        OnShowHumanPanel.Invoke(true, false, false, jail1, jail2);
+        if (playerList[currentPlayer].playerType == Player.PlayerType.HUMAN)
+        {
+            OnShowHumanPanel.Invoke(true, false, false, jail1, jail2);
+        }
         _dice1.RollDice();
         _dice2.RollDice();
     }
@@ -437,6 +440,5 @@ public class GameManager : MonoBehaviour
     {
         playerList[currentPlayer].UseChanceJailFreeCard();
     }
-
 
 }
